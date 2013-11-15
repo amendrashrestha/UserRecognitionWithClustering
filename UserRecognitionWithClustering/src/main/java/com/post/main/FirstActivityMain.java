@@ -11,6 +11,8 @@ import com.post.parser.model.Posts;
 import com.post.parser.model.User;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,7 +26,12 @@ public class FirstActivityMain {
         IOReadWrite ioReadWrite = new IOReadWrite();
         User user = new User();
         FirstActivityCluster fac = new FirstActivityCluster();
-        List unDividedUserList = ioReadWrite.getAllUsersAsObject();
+        List tempUnDividedUserList = ioReadWrite.getAllUsersAsObject();
+//        Collections.sort(tempUnDividedUserList);
+        List unDividedUserList = new ArrayList();
+        for(int i = 0; i < 5; i++){
+            unDividedUserList.add(tempUnDividedUserList.get(i));
+        }
         List dividedUserList = userDivision.divideAllUser(unDividedUserList);
         dividedUserList = user.setCategorizedTimeToUser(dividedUserList);
         dividedUserList = user.generateUserFirstActivityCluster(dividedUserList);

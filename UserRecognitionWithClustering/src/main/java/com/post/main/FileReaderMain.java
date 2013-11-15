@@ -20,6 +20,7 @@ public class FileReaderMain {
         UserDivision userDivision = new UserDivision();
         IOReadWrite ioReadWrite = new IOReadWrite();
         List a = ioReadWrite.getAllUsersAsObject();
+        System.out.println("Number of users having post more than 60 messages: " + a.size());
         User user = new User();
         FirstActivityCluster fac = new FirstActivityCluster();
         //List testList = userDivision.divideFirstUser(a);

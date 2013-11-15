@@ -6,8 +6,8 @@ package com.post.parser.IOHandler;
  */
 public class IOProperties {
 
-    public static final String XML_DATA_FILE_PATH = "C:\\Users\\ITE\\Downloads\\1998\\posts\\";
-    public static final String All_ACTIVITY_BASE_PATH = "C:\\Users\\ITE\\Downloads\\1998\\ActivityData\\";
+    public static final String XML_DATA_FILE_PATH = "C:\\Users\\ITE\\Downloads\\posts\\000\\";
+    public static final String All_ACTIVITY_BASE_PATH = "C:\\Users\\ITE\\Downloads\\ActivityData\\";
     /**
      * This is the base path for all the created data throughout the experiment. 
      * This path has to exist before running the program

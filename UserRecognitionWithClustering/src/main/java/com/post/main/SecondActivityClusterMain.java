@@ -4,6 +4,7 @@
  */
 package com.post.main;
 
+import com.post.parser.IOHandler.IOProperties;
 import com.post.parser.IOHandler.IOReadWrite;
 import com.post.parser.clustering.FirstActivityCluster;
 import com.post.parser.clustering.SecondActivityCluster;
@@ -49,6 +50,14 @@ public class SecondActivityClusterMain {
             System.out.println("Hi");
         }
         
+        String sacFolderPath = IOProperties.All_ACTIVITY_BASE_PATH + IOProperties.SECOND_ACTIVITY_FOLDER_NAME;
+        int finalUserSize = ioReadWrite.readSecondActivityClusterData(sacFolderPath);
+         System.out.println("Final User Size: " + finalUserSize);
+    /**
+     * Need to do this myself
+     */    
+        
+        
         // First get up to the path Second Activity
         // IOProperties.All_ACTIVITY_BASE_PATH + SECOND_ACTIVITY_FOLDER_NAME;
         // Read all the name of the folder from the above path in a list
@@ -65,12 +74,12 @@ public class SecondActivityClusterMain {
         // if the id mathces get that user and all its content
         
         // for(user size){
-        if(user.fourthIndex == 1){
-            styloUsers.add(user);
-     }
-      divive user
+     //   if(user.fourthIndex == 1){
+      //      styloUsers.add(user);
+     //}
+      //divive user
      // Inorder to divide first user into two parts and divide rest of the user into half - user UserDivision.divideFirstUser(pass user to divide);
-        styloCalculate (styloUsers);
+        //styloCalculate (styloUsers);
         
         // Start stylo mertics from here.
         

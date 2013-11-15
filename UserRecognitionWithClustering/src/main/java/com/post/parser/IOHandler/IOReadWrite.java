@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -35,9 +37,8 @@ public class IOReadWrite {
         String tempfileName = fileName + IOProperties.USER_FILE_EXTENSION;
         String completeFileNameNPath = fileLocation + "/" + tempfileName;
         File file = new File(completeFileNameNPath);
-        if (!file.exists()) {
-            file.createNewFile();
-        }
+        file.createNewFile();
+
         PrintWriter out = new PrintWriter(new FileWriter(completeFileNameNPath, true));
         out.append(content + IOProperties.DATA_SEPERATOR);
         out.close();
@@ -85,8 +86,8 @@ public class IOReadWrite {
             directory.mkdirs();
         }
     }
-    
-    public File checkAndCreateFile(String fileName) throws IOException{
+
+    public File checkAndCreateFile(String fileName) throws IOException {
         File file = new File(fileName);
         if (file.exists()) {
             file.delete();
@@ -172,6 +173,14 @@ public class IOReadWrite {
         return returnList;
     }
 
+    /**
+     * Return users as an object and returns only those users who has posted
+     * more than 60 messages in discussion board
+     *
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public List<User> getAllUsersAsObject() throws FileNotFoundException, IOException {
         IOReadWrite ioRW = new IOReadWrite();
         List directoryList = ioRW.getAllDirectories(IOProperties.INDIVIDUAL_USER_FILE_PATH);
@@ -181,14 +190,14 @@ public class IOReadWrite {
             allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList.get(i));
             for (int j = 0; j < allFilesSize.size(); j++) {
                 User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, directoryList.get(i).toString(), allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);
-                if (user.getUserPost().size() > 5) {
+                if (user.getUserPost().size() > 60) {
                     allFiles.add(user);
                 }
             }
         }
         return allFiles;
     }
-    
+
     public List<FirstActivityCluster> readFirstActivityClusterData(String fileName) throws FileNotFoundException, IOException {
         List<FirstActivityCluster> firstActivityCluster = new ArrayList();
         FirstActivityCluster fac;
@@ -202,9 +211,9 @@ public class IOReadWrite {
                 fac.setUserID(Integer.valueOf(splittedContent[0].toString()));
                 String splittedTimeVector = splittedContent[1].toString();
                 int timeVector[] = fac.getPostTimeVector();
-                
+
                 for (int i = 0; i < 6; i++) {
-                    if (!String.valueOf(splittedTimeVector.charAt(i)).equals("0")){
+                    if (!String.valueOf(splittedTimeVector.charAt(i)).equals("0")) {
                         timeVector[i] = 1;
                     }
                 }
@@ -219,7 +228,7 @@ public class IOReadWrite {
         checkAndCreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.FIRST_ACTIVITY_FOLDER_NAME);
         String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.FIRST_ACTIVITY_FOLDER_NAME
                 + "\\" + IOProperties.FIRST_ACTIVITY_FILE_NAME + IOProperties.FIRST_ACTIVITY_FILE_EXTENSION;
-        
+
         File file = checkAndCreateFile(completeFileNameNPath);
         int[] timeVector;
         BufferedWriter output = new BufferedWriter(new FileWriter(file, true));
@@ -235,10 +244,10 @@ public class IOReadWrite {
         }
         output.close();
     }
-    
+
     public void writeSleepingClusterData(List<SleepingCluster> sleepingCluster, String cluster) throws IOException {
         String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SLEEPING_FOLDER_NAME
-                + "\\" + IOProperties.SLEEPING_FILE_NAME+ cluster + IOProperties.SLEEPING_FILE_EXTENSION;
+                + "\\" + IOProperties.SLEEPING_FILE_NAME + cluster + IOProperties.SLEEPING_FILE_EXTENSION;
         File file = checkAndCreateFile(completeFileNameNPath);
         int[] timeVector;
         BufferedWriter output = new BufferedWriter(new FileWriter(file, true));
@@ -254,7 +263,7 @@ public class IOReadWrite {
         }
         output.close();
     }
-    
+
     public List<SleepingCluster> readSleepingClusterData(String fileName) throws FileNotFoundException, IOException {
         List<SleepingCluster> sleepingCluster = new ArrayList();
         SleepingCluster scObj;
@@ -268,9 +277,9 @@ public class IOReadWrite {
                 scObj.setUserID(Integer.valueOf(splittedContent[0].toString()));
                 String splittedTimeVector = splittedContent[1].toString();
                 int timeVector[] = scObj.getPostTimeVector();
-                
+
                 for (int i = 0; i < 6; i++) {
-                    if (!String.valueOf(splittedTimeVector.charAt(i)).equals("0")){
+                    if (!String.valueOf(splittedTimeVector.charAt(i)).equals("0")) {
                         timeVector[i] = 1;
                     }
                 }
@@ -280,55 +289,85 @@ public class IOReadWrite {
         }
         return sleepingCluster;
     }
-    
-     public void writeSecondActivityClusterData(List<List<SecondActivityCluster>> allsecondActivityCluster, int folderName) throws IOException {
+
+    public void writeSecondActivityClusterData(List<List<SecondActivityCluster>> allsecondActivityCluster, int folderName) throws IOException {
         checkAndCreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.SECOND_ACTIVITY_FOLDER_NAME);
-        checkAndCreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH+"\\"+IOProperties.SECOND_ACTIVITY_FOLDER_NAME, String.valueOf(folderName) );
-        for(int i=0; i<allsecondActivityCluster.size(); i++){
+        checkAndCreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SECOND_ACTIVITY_FOLDER_NAME, String.valueOf(folderName));
+        for (int i = 0; i < allsecondActivityCluster.size(); i++) {
             List<SecondActivityCluster> secondActivityCluster = allsecondActivityCluster.get(i);
             String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SECOND_ACTIVITY_FOLDER_NAME + "\\" + String.valueOf(folderName)
-                + "\\" + IOProperties.SECOND_ACTIVITY_FILE_NAME+ String.valueOf(i+1) + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
+                    + "\\" + IOProperties.SECOND_ACTIVITY_FILE_NAME + String.valueOf(i + 1) + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
             File file = checkAndCreateFile(completeFileNameNPath);
             int[] timeVector;
             BufferedWriter output = new BufferedWriter(new FileWriter(file, true));
-             for (SecondActivityCluster sacObj : secondActivityCluster) {
-            timeVector = sacObj.getPostTimeVector();
-            String timeVectorAsString = "";
-            for (int j = 0; j < timeVector.length; j++) {
-                timeVectorAsString = timeVectorAsString + String.valueOf(timeVector[j]);
+            for (SecondActivityCluster sacObj : secondActivityCluster) {
+                timeVector = sacObj.getPostTimeVector();
+                String timeVectorAsString = "";
+                for (int j = 0; j < timeVector.length; j++) {
+                    timeVectorAsString = timeVectorAsString + String.valueOf(timeVector[j]);
+                }
+                String toWriteContent = String.valueOf(sacObj.getUserID()) + " " + timeVectorAsString;
+                output.write(toWriteContent);
+                output.newLine();
             }
-            String toWriteContent = String.valueOf(sacObj.getUserID()) + " " + timeVectorAsString;
-            output.write(toWriteContent);
-            output.newLine();
+            output.close();
         }
-        output.close();
-       }
     }
-     // This function has to be modified based on the recent changes
-     public List<SecondActivityCluster> readSecondActivityClusterData(String fileName) throws FileNotFoundException, IOException {
-        List<SecondActivityCluster> secondActivityCluster = new ArrayList();
-        SecondActivityCluster sacObj;
-        File file = new File(fileName);
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line = null;
-        if (file.exists()) {
-            while ((line = reader.readLine()) != null) {
-                sacObj = new SecondActivityCluster();
-                String[] splittedContent = line.split(" ");
-                sacObj.setUserID(Integer.valueOf(splittedContent[0].toString()));
-                String splittedTimeVector = splittedContent[1].toString();
-                int timeVector[] = sacObj.getPostTimeVector();
-                
-                for (int i = 0; i < 6; i++) {
-                    if (!String.valueOf(splittedTimeVector.charAt(i)).equals("0")){
-                        timeVector[i] = 1;
+    // This function has to be modified based on the recent changes
+
+    public int readSecondActivityClusterData(String filePath) throws FileNotFoundException, IOException {
+        IOReadWrite ioRW = new IOReadWrite();
+        List sacFolders = new ArrayList();
+        sacFolders = ioRW.getAllDirectories(filePath);
+        List allsacFiles = new ArrayList();
+        Collection allUsers  = new HashSet();
+        
+        for (int i = 0; i < sacFolders.size(); i++) {
+            String folderName = sacFolders.get(i).toString();
+            allsacFiles = ioRW.getAllFilesInADirectory(filePath + "\\" + folderName);
+            for (int j = 0; j < allsacFiles.size(); j++) {
+                String fileName = allsacFiles.get(j).toString();
+                File file = new File(filePath +"\\"+ folderName +"\\"+ fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION);
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+
+                String line = null;
+                if (file.exists()) {
+                    while ((line = reader.readLine()) != null) {
+                        String[] splittedContent = line.split(" ");
+                        Integer user = Integer.valueOf(splittedContent[0].toString());
+                        allUsers.add(user);
                     }
                 }
-                sacObj.setPostTimeVector(timeVector);
-                secondActivityCluster.add(sacObj);
+            
+                /*File file = new File(fileName);
+                 BufferedReader reader = new BufferedReader(new FileReader(file));
+                 String line = null;
+                 if (file.exists()) {
+                 while ((line = reader.readLine()) != null) {
+                 sacObj = new SecondActivityCluster();
+                 String[] splittedContent = line.split(" ");
+                 sacObj.setUserID(Integer.valueOf(splittedContent[0].toString()));
+                 String splittedTimeVector = splittedContent[1].toString();
+                 int timeVector[] = sacObj.getPostTimeVector();
+
+                 for (int i = 0; i < 6; i++) {
+                 if (!String.valueOf(splittedTimeVector.charAt(i)).equals("0")) {
+                 timeVector[i] = 1;
+                 }
+                 }
+                 sacObj.setPostTimeVector(timeVector);
+                 secondActivityCluster.add(sacObj);
+                 }
+                 }*/
+                //return secondActivityCluster;
+                
             }
         }
-        return secondActivityCluster;
+        for(Object users : allUsers){
+            System.out.println("Final UserID: " + users);
+        }
+        int userSize = allUsers.size();
+        return userSize;
     }
     
 }
