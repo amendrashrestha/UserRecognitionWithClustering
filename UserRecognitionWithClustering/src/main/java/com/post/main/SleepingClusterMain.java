@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.test.main;
+package com.post.main;
 
 import com.post.parser.IOHandler.IOReadWrite;
 import com.post.parser.clustering.FirstActivityCluster;

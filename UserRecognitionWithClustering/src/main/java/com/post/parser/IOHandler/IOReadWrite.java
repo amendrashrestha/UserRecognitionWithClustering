@@ -28,8 +28,6 @@ public class IOReadWrite {
     public IOReadWrite() {
     }
 
-    
-
     public void writeToFile(String fileName, String content) throws IOException {
         String getUserFolderName = getFolderName(fileName);
         checkAndCreateDirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH, getUserFolderName);

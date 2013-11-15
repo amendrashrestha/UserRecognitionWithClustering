@@ -1,4 +1,4 @@
-package com.test.main;
+package com.post.main;
 
 import com.post.parser.view.CreateParser;
 import java.io.IOException;

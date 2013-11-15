@@ -1,4 +1,4 @@
-package com.test.main;
+package com.post.main;
 
 import com.post.parser.IOHandler.IOReadWrite;
 import com.post.parser.clustering.FirstActivityCluster;
