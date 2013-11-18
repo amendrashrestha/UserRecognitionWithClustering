@@ -3,6 +3,7 @@ package com.post.parser.IOHandler;
 import com.post.parser.clustering.FirstActivityCluster;
 import com.post.parser.clustering.SecondActivityCluster;
 import com.post.parser.clustering.SleepingCluster;
+import com.post.parser.clustering.UserDivision;
 import com.post.parser.controller.FileDirectoryHandler;
 import com.post.parser.model.Posts;
 import com.post.parser.model.User;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -159,6 +161,7 @@ public class IOReadWrite {
             }
         }
         user.setUserPost(postList);
+
         return user;
     }
 
@@ -313,21 +316,29 @@ public class IOReadWrite {
             output.close();
         }
     }
-    // This function has to be modified based on the recent changes
 
-    public int readSecondActivityClusterData(String filePath) throws FileNotFoundException, IOException {
+    /**
+     * This method returns the total number of unique users in second activity
+     * cluster
+     *
+     * @param filePath
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public int returnSecondActivityClusterUserSize(String filePath) throws FileNotFoundException, IOException {
         IOReadWrite ioRW = new IOReadWrite();
         List sacFolders = new ArrayList();
         sacFolders = ioRW.getAllDirectories(filePath);
         List allsacFiles = new ArrayList();
-        Collection allUsers  = new HashSet();
-        
+        Collection allUsers = new HashSet();
+
         for (int i = 0; i < sacFolders.size(); i++) {
             String folderName = sacFolders.get(i).toString();
             allsacFiles = ioRW.getAllFilesInADirectory(filePath + "\\" + folderName);
             for (int j = 0; j < allsacFiles.size(); j++) {
                 String fileName = allsacFiles.get(j).toString();
-                File file = new File(filePath +"\\"+ folderName +"\\"+ fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION);
+                File file = new File(filePath + "\\" + folderName + "\\" + fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION);
                 BufferedReader reader = new BufferedReader(new FileReader(file));
 
                 String line = null;
@@ -338,36 +349,88 @@ public class IOReadWrite {
                         allUsers.add(user);
                     }
                 }
-            
-                /*File file = new File(fileName);
-                 BufferedReader reader = new BufferedReader(new FileReader(file));
-                 String line = null;
-                 if (file.exists()) {
-                 while ((line = reader.readLine()) != null) {
-                 sacObj = new SecondActivityCluster();
-                 String[] splittedContent = line.split(" ");
-                 sacObj.setUserID(Integer.valueOf(splittedContent[0].toString()));
-                 String splittedTimeVector = splittedContent[1].toString();
-                 int timeVector[] = sacObj.getPostTimeVector();
-
-                 for (int i = 0; i < 6; i++) {
-                 if (!String.valueOf(splittedTimeVector.charAt(i)).equals("0")) {
-                 timeVector[i] = 1;
-                 }
-                 }
-                 sacObj.setPostTimeVector(timeVector);
-                 secondActivityCluster.add(sacObj);
-                 }
-                 }*/
-                //return secondActivityCluster;
-                
             }
         }
-        for(Object users : allUsers){
+        for (Object users : allUsers) {
             System.out.println("Final UserID: " + users);
         }
         int userSize = allUsers.size();
         return userSize;
     }
-    
+
+    public void readSecondActivityClusterData(String filePath) throws FileNotFoundException, IOException {
+        IOReadWrite ioRW = new IOReadWrite();
+        List sacFolders = new ArrayList();
+        sacFolders = ioRW.getAllDirectories(filePath);
+        List allsacFiles = new ArrayList();
+        List<User> firstCluster = new ArrayList();
+        List<User> secondCluster = new ArrayList();
+        List<User> thirdCluster = new ArrayList();
+        List<User> fourthCluster = new ArrayList();
+        List<User> fifthCluster = new ArrayList();
+        List<User> sixthCluster = new ArrayList();
+
+        for (int i = 0; i < sacFolders.size(); i++) {
+            String folderName = sacFolders.get(i).toString();
+            allsacFiles = ioRW.getAllFilesInADirectory(filePath + "\\" + folderName);
+
+            for (int j = 0; j < allsacFiles.size(); j++) {
+                String fileName = allsacFiles.get(j).toString();
+                File file = new File(filePath + "\\" + folderName + "\\" + fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION);
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+
+                String line = null;
+
+                if (file.exists()) {
+                    while ((line = reader.readLine()) != null) {
+                        String tempfolderName = "";
+                        String[] splittedContent = line.split(" ");
+                        int userID = Integer.valueOf(splittedContent[0].toString());
+//                        String userClusterInfo = Integer.valueOf(splittedContent[1].toString());
+                        String userClusterInfo = splittedContent[1];
+                        List<Integer> clusterNumber = returnDigits(userClusterInfo);
+
+                        tempfolderName = getFolderName(Integer.valueOf(userID).toString());
+                        User objUser = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, tempfolderName,
+                                Integer.valueOf(userID).toString(), IOProperties.USER_FILE_EXTENSION);
+
+                        if (clusterNumber.get(0) == 1) {
+                            firstCluster.add(objUser);
+                        }
+                        if (clusterNumber.get(1) == 1) {
+                            secondCluster.add(objUser);
+                        }
+                        if (clusterNumber.get(2) == 1) {
+                            thirdCluster.add(objUser);
+                        }
+                        if (clusterNumber.get(3) == 1) {
+                            fourthCluster.add(objUser);
+                        }
+                        if (clusterNumber.get(4) == 1) {
+                            fifthCluster.add(objUser);
+                        }
+                        if (clusterNumber.get(5) == 1) {
+                            sixthCluster.add(objUser);
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("First Cluster" + firstCluster);
+        System.out.println("Second Cluster" + secondCluster);
+        System.out.println("Third Cluster" + thirdCluster);
+        System.out.println("Fourth Cluster" + fourthCluster);
+        System.out.println("Fifth Cluster" + fifthCluster);
+        System.out.println("Sixth Cluster" + sixthCluster);
+    }
+
+    public List<Integer> returnDigits(String cluster) {
+        LinkedList<Integer> digits = new LinkedList<Integer>();
+        int i = Integer.valueOf(cluster);
+        while (i > 0) {
+            digits.push(i % 10);
+            i /= 10;
+        }
+        return digits;
+    }
 }

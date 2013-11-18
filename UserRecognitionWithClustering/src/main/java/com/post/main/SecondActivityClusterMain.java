@@ -47,12 +47,14 @@ public class SecondActivityClusterMain {
                 scClusterSACList.add(sacObj.getIndiviudalClusterUser(facList, scList, j, i, allUserUnDividedUserList));
             }
             sacObj.writeSecondActivityCluster(scClusterSACList, j+1);
-            System.out.println("Hi");
         }
         
         String sacFolderPath = IOProperties.All_ACTIVITY_BASE_PATH + IOProperties.SECOND_ACTIVITY_FOLDER_NAME;
-        int finalUserSize = ioReadWrite.readSecondActivityClusterData(sacFolderPath);
-         System.out.println("Final User Size: " + finalUserSize);
+        //int sacUserSize = ioReadWrite.returnSecondActivityClusterUserSize(sacFolderPath);
+        //System.out.println("Final User Size: " + sacUserSize);
+        
+        ioReadWrite.readSecondActivityClusterData(sacFolderPath);
+         
     /**
      * Need to do this myself
      */    
