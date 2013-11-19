@@ -22,6 +22,16 @@ public class User {
      * The information about the avaiable time frame can be viewed on method "timeCategoryDefinition()" 
      * defined in class "com.post.parser.clustering.FirstActivityCluster"
      */
+    // Do you need this variable?? what it has??
+    // I calucates the total number of posts in an indiviudal time frame
+    // Like got it...rakhi rakha na...b
+    // but you will have to calcualte this value inorder to populate this variable
+    // You cannot get this from a file
+    //pardaina na gara teso vaye..wait i will use the computer now...i will show you something...
+    // we have already extract the post and post time of each individual rser....
+    // aba k garne ho
+    // we can use the same thing
+    // tyo kura chai tara Stylometric clas bhitra calculate garne...
     private int[] classifiedTimeVector;
     /*
      * This variable contains the boolean 0/1 values in int[] array.

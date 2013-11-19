@@ -7,6 +7,7 @@ import com.post.parser.clustering.UserDivision;
 import com.post.parser.controller.FileDirectoryHandler;
 import com.post.parser.model.Posts;
 import com.post.parser.model.User;
+import com.post.stylometric.StylometricMatching;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,6 +23,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -358,17 +360,28 @@ public class IOReadWrite {
         return userSize;
     }
 
+    /**
+     * Sirji ek choti yo part heri deu na hai...
+     *
+     * @param filePath
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public void readSecondActivityClusterData(String filePath) throws FileNotFoundException, IOException {
         IOReadWrite ioRW = new IOReadWrite();
         List sacFolders = new ArrayList();
         sacFolders = ioRW.getAllDirectories(filePath);
         List allsacFiles = new ArrayList();
-        List<User> firstCluster = new ArrayList();
-        List<User> secondCluster = new ArrayList();
-        List<User> thirdCluster = new ArrayList();
-        List<User> fourthCluster = new ArrayList();
-        List<User> fifthCluster = new ArrayList();
-        List<User> sixthCluster = new ArrayList();
+        Set firstCluster = new HashSet();
+        Set secondCluster = new HashSet();
+        Set thirdCluster = new HashSet();
+        Set fourthCluster = new HashSet();
+        Set fifthCluster = new HashSet();
+        Set sixthCluster = new HashSet();
+        StylometricMatching styloMetric = new StylometricMatching();
+        List<Float> styloValue = new ArrayList<Float>();
+         
+       
 
         for (int i = 0; i < sacFolders.size(); i++) {
             String folderName = sacFolders.get(i).toString();
@@ -386,50 +399,104 @@ public class IOReadWrite {
                         String tempfolderName = "";
                         String[] splittedContent = line.split(" ");
                         int userID = Integer.valueOf(splittedContent[0].toString());
-//                        String userClusterInfo = Integer.valueOf(splittedContent[1].toString());
-                        String userClusterInfo = splittedContent[1];
-                        List<Integer> clusterNumber = returnDigits(userClusterInfo);
-
-                        tempfolderName = getFolderName(Integer.valueOf(userID).toString());
-                        User objUser = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, tempfolderName,
-                                Integer.valueOf(userID).toString(), IOProperties.USER_FILE_EXTENSION);
+                        String ClusterInfo = splittedContent[1];
+                        List<Integer> clusterNumber = returnDigits(ClusterInfo);
+                        
+                        //this should be done in Stylometric sectio
+                        // object pass na garne...we will be just pasing ID..we can make user object
+                        // inside stylometric class
+                        // Why would you pass only the id when you have all the content??.
+                        //because later on if someone just passed ID then we can work 
+                        // otherwise always the object will be the requirement for that class
+                        // Well that makes perfect sense, but your whole project now is fucked up and
+                        // you want to think that??
+                        
+                        // auta yesto method banaunu paryo...jasle primitive datatype liyos na ki object and
+                        // is capable of returning OK OK i got it
+                        // ok i am doing your way it looks easy that way
+                        
+                           
+                            tempfolderName = getFolderName(Integer.valueOf(userID).toString());
+                            User objUser = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, tempfolderName,
+                                   Integer.valueOf(userID).toString(), IOProperties.USER_FILE_EXTENSION);
 
                         if (clusterNumber.get(0) == 1) {
-                            firstCluster.add(objUser);
+                            firstCluster.add(userID); // yo list pass garnu paryo.
                         }
                         if (clusterNumber.get(1) == 1) {
-                            secondCluster.add(objUser);
+                            secondCluster.add(userID);
                         }
                         if (clusterNumber.get(2) == 1) {
-                            thirdCluster.add(objUser);
+                            thirdCluster.add(userID);
                         }
                         if (clusterNumber.get(3) == 1) {
-                            fourthCluster.add(objUser);
+                            fourthCluster.add(userID);
                         }
                         if (clusterNumber.get(4) == 1) {
-                            fifthCluster.add(objUser);
+                            fifthCluster.add(userID);
                         }
                         if (clusterNumber.get(5) == 1) {
-                            sixthCluster.add(objUser);
+                            sixthCluster.add(userID);
                         }
                     }
                 }
+                
+                // 
             }
         }
-        System.out.println("First Cluster" + firstCluster);
-        System.out.println("Second Cluster" + secondCluster);
-        System.out.println("Third Cluster" + thirdCluster);
-        System.out.println("Fourth Cluster" + fourthCluster);
-        System.out.println("Fifth Cluster" + fifthCluster);
-        System.out.println("Sixth Cluster" + sixthCluster);
+        // Ok i have to go now i will back after 1 hr.
+        // people coming bye ok
+        
+        for (int i=0; i<6; i++){
+            if (i == 0) styloMetric.getStyloMetric(firstCluster, i+1);
+            if (i == 1) styloMetric.getStyloMetric(secondCluster, i+1);
+            if (i == 2) styloMetric.getStyloMetric(thirdCluster, i+1);
+            if (i == 3) styloMetric.getStyloMetric(fourthCluster, i+1);
+            if (i == 4) styloMetric.getStyloMetric(fifthCluster, i+1);
+            if (i == 5) styloMetric.getStyloMetric(sixthCluster, i+1);
+            
+        }
+         
+                           
+        
+        //calculate Stylometric of each individual users by passing the user ID
+        System.out.println("First Cluster");
+        for (Object user : firstCluster) { 
+            // this is the list of users in first cluster we will be passing this list of user for stylometrci
+            // Now you want id to be passed??
+            //tyo ta loop lagayera huncha but existing stylometric ley userID lidaina
+            // ok ok i understand 
+            System.out.println(user);
+        }
+        System.out.println("Second Cluster");
+        for(Object user : secondCluster){
+            System.out.println(user);
+        }
+        System.out.println("Third Cluster");
+        for(Object user : thirdCluster){
+            System.out.println(user);
+        }
+        System.out.println("Fourth Cluster");
+        for(Object user : fourthCluster){
+            System.out.println(user);
+        }
+        System.out.println("Fifth Cluster");
+        for(Object user : fifthCluster){
+            System.out.println(user);
+        }
+        System.out.println("Sixth Cluster");
+        for(Object user : sixthCluster){
+            System.out.println(user);
+        }
     }
 
     public List<Integer> returnDigits(String cluster) {
         LinkedList<Integer> digits = new LinkedList<Integer>();
-        int i = Integer.valueOf(cluster);
-        while (i > 0) {
-            digits.push(i % 10);
-            i /= 10;
+        char[] cArray = cluster.toCharArray();
+        for (int i = 0; i < cArray.length; i++) {
+            String tempCharacter = String.valueOf(cArray[i]);
+            int singleNumber = Integer.valueOf(tempCharacter);
+            digits.add(i, singleNumber);
         }
         return digits;
     }
