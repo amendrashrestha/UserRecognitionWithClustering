@@ -7,7 +7,8 @@ import com.post.parser.clustering.UserDivision;
 import com.post.parser.controller.FileDirectoryHandler;
 import com.post.parser.model.Posts;
 import com.post.parser.model.User;
-import com.post.stylometric.StylometricMatching;
+import com.post.analysis.StylometricMatching;
+import com.post.parser.model.Alias;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,7 +37,7 @@ public class IOReadWrite {
 
     public void writeToFile(String fileName, String content) throws IOException {
         String getUserFolderName = getFolderName(fileName);
-        checkAndCreateDirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH, getUserFolderName);
+        CreateDirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH, getUserFolderName);
         String fileLocation = IOProperties.INDIVIDUAL_USER_FILE_PATH + getUserFolderName;
         String tempfileName = fileName + IOProperties.USER_FILE_EXTENSION;
         String completeFileNameNPath = fileLocation + "/" + tempfileName;
@@ -84,11 +85,35 @@ public class IOReadWrite {
         return folderName;
     }
 
-    public void checkAndCreateDirectory(String path, String folderName) {
+    public void CreateDirectory(String path, String folderName) {
         File directory = new File(path + "\\" + folderName); //for mac use / and for windows use "\\"
         if (!directory.exists()) {
             directory.mkdirs();
         }
+    }
+
+    /*
+     * Delete directory if it exists and will create new
+     */
+    public void checkAndCreateDirectory(String path, String folderName) {
+        File directory = new File(path + "\\" + folderName); //for mac use / and for windows use "\\"
+        if (directory.exists()) {
+            deleteDir(directory);
+        }
+        directory.mkdirs();
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete(); // The directory is empty now and can be deleted.
     }
 
     public File checkAndCreateFile(String fileName) throws IOException {
@@ -96,6 +121,12 @@ public class IOReadWrite {
         if (file.exists()) {
             file.delete();
         }
+        file.createNewFile();
+        return file;
+    }
+
+    public File CreateFile(String fileName) throws IOException {
+        File file = new File(fileName);
         file.createNewFile();
         return file;
     }
@@ -230,7 +261,7 @@ public class IOReadWrite {
     }
 
     public void writeFirstActivityClusterData(List<FirstActivityCluster> firstActivityCluster) throws IOException {
-        checkAndCreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.FIRST_ACTIVITY_FOLDER_NAME);
+        CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.FIRST_ACTIVITY_FOLDER_NAME);
         String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.FIRST_ACTIVITY_FOLDER_NAME
                 + "\\" + IOProperties.FIRST_ACTIVITY_FILE_NAME + IOProperties.FIRST_ACTIVITY_FILE_EXTENSION;
 
@@ -296,8 +327,8 @@ public class IOReadWrite {
     }
 
     public void writeSecondActivityClusterData(List<List<SecondActivityCluster>> allsecondActivityCluster, int folderName) throws IOException {
-        checkAndCreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.SECOND_ACTIVITY_FOLDER_NAME);
-        checkAndCreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SECOND_ACTIVITY_FOLDER_NAME, String.valueOf(folderName));
+        CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.SECOND_ACTIVITY_FOLDER_NAME);
+        CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SECOND_ACTIVITY_FOLDER_NAME, String.valueOf(folderName));
         for (int i = 0; i < allsecondActivityCluster.size(); i++) {
             List<SecondActivityCluster> secondActivityCluster = allsecondActivityCluster.get(i);
             String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SECOND_ACTIVITY_FOLDER_NAME + "\\" + String.valueOf(folderName)
@@ -372,16 +403,6 @@ public class IOReadWrite {
         List sacFolders = new ArrayList();
         sacFolders = ioRW.getAllDirectories(filePath);
         List allsacFiles = new ArrayList();
-        Set firstCluster = new HashSet();
-        Set secondCluster = new HashSet();
-        Set thirdCluster = new HashSet();
-        Set fourthCluster = new HashSet();
-        Set fifthCluster = new HashSet();
-        Set sixthCluster = new HashSet();
-        StylometricMatching styloMetric = new StylometricMatching();
-        List<Float> styloValue = new ArrayList<Float>();
-         
-       
 
         for (int i = 0; i < sacFolders.size(); i++) {
             String folderName = sacFolders.get(i).toString();
@@ -396,100 +417,41 @@ public class IOReadWrite {
 
                 if (file.exists()) {
                     while ((line = reader.readLine()) != null) {
-                        String tempfolderName = "";
                         String[] splittedContent = line.split(" ");
                         int userID = Integer.valueOf(splittedContent[0].toString());
                         String ClusterInfo = splittedContent[1];
                         List<Integer> clusterNumber = returnDigits(ClusterInfo);
-                        
-                        //this should be done in Stylometric sectio
-                        // object pass na garne...we will be just pasing ID..we can make user object
-                        // inside stylometric class
-                        // Why would you pass only the id when you have all the content??.
-                        //because later on if someone just passed ID then we can work 
-                        // otherwise always the object will be the requirement for that class
-                        // Well that makes perfect sense, but your whole project now is fucked up and
-                        // you want to think that??
-                        
-                        // auta yesto method banaunu paryo...jasle primitive datatype liyos na ki object and
-                        // is capable of returning OK OK i got it
-                        // ok i am doing your way it looks easy that way
-                        
-                           
-                            tempfolderName = getFolderName(Integer.valueOf(userID).toString());
-                            User objUser = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, tempfolderName,
-                                   Integer.valueOf(userID).toString(), IOProperties.USER_FILE_EXTENSION);
 
                         if (clusterNumber.get(0) == 1) {
-                            firstCluster.add(userID); // yo list pass garnu paryo.
+                            writeStylometricClusterData(userID, 1);
                         }
                         if (clusterNumber.get(1) == 1) {
-                            secondCluster.add(userID);
+                            writeStylometricClusterData(userID, 2);
                         }
                         if (clusterNumber.get(2) == 1) {
-                            thirdCluster.add(userID);
+                            writeStylometricClusterData(userID, 3);
                         }
                         if (clusterNumber.get(3) == 1) {
-                            fourthCluster.add(userID);
+                            writeStylometricClusterData(userID, 4);
                         }
                         if (clusterNumber.get(4) == 1) {
-                            fifthCluster.add(userID);
+                            writeStylometricClusterData(userID, 5);
                         }
                         if (clusterNumber.get(5) == 1) {
-                            sixthCluster.add(userID);
+                            writeStylometricClusterData(userID, 6);
                         }
                     }
                 }
-                
-                // 
             }
-        }
-        // Ok i have to go now i will back after 1 hr.
-        // people coming bye ok
-        
-        for (int i=0; i<6; i++){
-            if (i == 0) styloMetric.getStyloMetric(firstCluster, i+1);
-            if (i == 1) styloMetric.getStyloMetric(secondCluster, i+1);
-            if (i == 2) styloMetric.getStyloMetric(thirdCluster, i+1);
-            if (i == 3) styloMetric.getStyloMetric(fourthCluster, i+1);
-            if (i == 4) styloMetric.getStyloMetric(fifthCluster, i+1);
-            if (i == 5) styloMetric.getStyloMetric(sixthCluster, i+1);
-            
-        }
-         
-                           
-        
-        //calculate Stylometric of each individual users by passing the user ID
-        System.out.println("First Cluster");
-        for (Object user : firstCluster) { 
-            // this is the list of users in first cluster we will be passing this list of user for stylometrci
-            // Now you want id to be passed??
-            //tyo ta loop lagayera huncha but existing stylometric ley userID lidaina
-            // ok ok i understand 
-            System.out.println(user);
-        }
-        System.out.println("Second Cluster");
-        for(Object user : secondCluster){
-            System.out.println(user);
-        }
-        System.out.println("Third Cluster");
-        for(Object user : thirdCluster){
-            System.out.println(user);
-        }
-        System.out.println("Fourth Cluster");
-        for(Object user : fourthCluster){
-            System.out.println(user);
-        }
-        System.out.println("Fifth Cluster");
-        for(Object user : fifthCluster){
-            System.out.println(user);
-        }
-        System.out.println("Sixth Cluster");
-        for(Object user : sixthCluster){
-            System.out.println(user);
         }
     }
 
+    /**
+     * split string into character and returns
+     *
+     * @param cluster
+     * @return
+     */
     public List<Integer> returnDigits(String cluster) {
         LinkedList<Integer> digits = new LinkedList<Integer>();
         char[] cArray = cluster.toCharArray();
@@ -499,5 +461,168 @@ public class IOReadWrite {
             digits.add(i, singleNumber);
         }
         return digits;
+    }
+
+    /**
+     * create files with clustering info of each users
+     *
+     * @param User
+     * @param fileName
+     * @throws IOException
+     */
+    public void writeStylometricClusterData(int User, int fileName) throws IOException {
+        CreateDirectory(IOProperties.XML_DATA_FILE_PATH, IOProperties.CLUSTER_FOLDER_NAME);
+        String completeFileNameNPath = IOProperties.XML_DATA_FILE_PATH + "\\" + String.valueOf(IOProperties.CLUSTER_FOLDER_NAME)
+                + "\\" + String.valueOf(fileName)
+                + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
+        File file = CreateFile(completeFileNameNPath);
+        BufferedWriter output = new BufferedWriter(new FileWriter(file, true));
+
+        String toWriteContent = String.valueOf(User);
+        output.write(toWriteContent);
+        output.newLine();
+        output.close();
+    }
+
+    /**
+     * read clustered files and return of List of object of user
+     *
+     * @param fileName
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+//    HttpURl Http:www.amendra.com.np/something.html
+//            
+//    String basePath, package, className, ()
+    
+            
+   
+    
+    public List<String> readClusterData(String fileName) throws FileNotFoundException, IOException {
+        File file = new File(fileName);
+        List<String> dataList = new ArrayList<String>();
+        String line = "";
+        removeDuplicateRowsFromFile(file);
+        if (file.exists()) {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            while ((line = reader.readLine()) != null) {
+                    dataList.add(line);
+            }
+        }
+        return dataList;
+    }
+
+    /**
+     * removes duplicate users from the row
+     *
+     * @param file
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void removeDuplicateRowsFromFile(File file) throws FileNotFoundException, IOException {
+        if (file.exists()) {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            Set<String> lines = new HashSet<String>(100000);
+            String line = null;
+
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+            reader.close();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            for (String unique : lines) {
+                writer.write(unique);
+                writer.newLine();
+            }
+            writer.close();
+        }
+    }
+
+    public Alias convertTxtFileToAliasObj(String basePath, String directoryName, String fileName, String extension) throws FileNotFoundException, IOException {
+        String userPostAsString = readTxtFileAsString(basePath, directoryName, fileName, extension);
+        String temp[] = null;
+        Alias alias = new Alias();
+        List<String> postList = new ArrayList<String>();
+        List<String> timeList = new ArrayList<String>();
+        alias.setUserID(fileName);
+        if (userPostAsString.contains(IOProperties.DATA_SEPERATOR)) {
+            temp = userPostAsString.split(IOProperties.DATA_SEPERATOR);
+        } else {
+            temp = new String[1];
+            temp[0] = userPostAsString;
+        }
+
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].toString().length() == 8) {
+                temp[i] = temp[i].toString() + "  ";
+            }
+            String date = temp[i].substring(0, 8);
+            if (date.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                timeList.add(date);
+                postList.add(temp[i].substring(9, temp[i].length()));
+            } else {
+                continue;
+            }
+        }
+        alias.setPostTime(timeList);
+        alias.setPosts(postList);
+        return alias;
+    }
+
+    public List<Alias> convertTxtFileToAliasObjAndDivide(int divisionFlag, String basePath, String directoryName, 
+            String fileName, String extension, List<Alias> aliasList) throws FileNotFoundException, IOException {
+        String userPostAsString = readTxtFileAsString(basePath, directoryName, fileName, extension);
+        String temp[] = null;
+        Alias aliasA = new Alias();
+        Alias aliasB = new Alias();
+        List<String> postListA = new ArrayList<String>();
+        List<String> timeListA = new ArrayList<String>();
+        List<String> postListB = new ArrayList<String>();
+        List<String> timeListB = new ArrayList<String>();
+        aliasA.setUserID(fileName);
+        aliasB.setUserID(fileName);
+        aliasA.setType("A");
+        aliasB.setType("B");
+        if (userPostAsString.contains(IOProperties.DATA_SEPERATOR)) {
+            temp = userPostAsString.split(IOProperties.DATA_SEPERATOR);
+        } else {
+            temp = new String[1];
+            temp[0] = userPostAsString;
+        }
+
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].toString().length() == 8) {
+                temp[i] = temp[i].toString() + "  ";
+            }
+            String date = temp[i].substring(0, 8);
+            String content = "";
+            if (date.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                content = temp[i].substring(9, temp[i].length());
+                if (i % 2 == 0 && divisionFlag == 2) {
+                    timeListA.add(date);
+                    postListA.add(content);
+                } else if (i % 2 != 0) {
+                    timeListB.add(date);
+                    postListB.add(content);
+                }
+            } else {
+                continue;
+            }
+        }
+
+        if (divisionFlag == 2) {
+            aliasA.setPostTime(timeListA);
+            aliasA.setPosts(postListA);
+            aliasList.add(0, aliasA);
+        }
+        
+        aliasB.setPostTime(timeListB);
+        aliasB.setPosts(postListB);
+        aliasList.add(aliasB);
+
+        return aliasList;
     }
 }

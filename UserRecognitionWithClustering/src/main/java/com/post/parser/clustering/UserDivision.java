@@ -1,5 +1,6 @@
 package com.post.parser.clustering;
 
+import com.post.parser.model.Alias;
 import com.post.parser.model.Posts;
 import com.post.parser.model.User;
 import com.post.parser.model.UserType;
@@ -55,18 +56,18 @@ public class UserDivision {
      * @return List<User>
      */
     
-    public List<User> divideFirstUser(List<User> userList) {
+    public List<User> divideFirstUser(List<User> userList, int index) {
         List finalList = new ArrayList();
         for (int i = 0; i < userList.size(); i++) {
             User user = (User) userList.get(i);
             List firstUserList = null;
-            if (i == 0) {
+            if (i == index) {
                 firstUserList = new ArrayList();
             }
             List postList = user.getUserPost();
             List toAddPostList = new ArrayList();
             for (int j = 0; j < postList.size(); j++) {
-                if (j % 2 == 0 && i == 0) {
+                if (j % 2 == 0 && i == index) {
                     firstUserList.add((Posts) postList.get(j));
                 } else if (j % 2 != 0) {
                     toAddPostList.add((Posts) postList.get(j));
@@ -87,4 +88,43 @@ public class UserDivision {
         }
         return finalList;
     }   
+    
+    /*public List<Alias> divideFirstAlias(List<Alias> aliasList, int index){
+        List finalList = new ArrayList();
+        for (int i = 0; i < aliasList.size(); i++) {
+            //User user = (User) userList.get(i);
+            Alias alias = (Alias) aliasList.get(i);
+            List firstAliasList = null;
+            if (i == index) {
+                firstAliasList = new ArrayList();
+            }
+            
+            List postList = alias.getPosts();
+            List timeList = alias.getPostTime();
+            
+            
+//            List postList = user.getUserPost();
+            List toAddPostList = new ArrayList();
+            for (int j = 0; j < postList.size(); j++) {
+                if (j % 2 == 0 && i == index) {
+                    firstUserList.add((Posts) postList.get(j));
+                } else if (j % 2 != 0) {
+                    toAddPostList.add((Posts) postList.get(j));
+                }
+            }
+            if (i == 0) {
+                User firstUser = new User();
+                firstUser.setType(UserType.A);
+                firstUser.setId(user.getId());
+                firstUser.setUserPost(firstUserList);
+                finalList.add(0, firstUser);
+            }
+            User users = new User();
+            users.setType(UserType.B);
+            users.setId(user.getId());
+            users.setUserPost(toAddPostList);
+            finalList.add(users);
+        }
+        return finalList;
+    }*/
 }

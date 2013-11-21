@@ -27,12 +27,15 @@ public class FirstActivityMain {
         User user = new User();
         FirstActivityCluster fac = new FirstActivityCluster();
         List tempUnDividedUserList = ioReadWrite.getAllUsersAsObject();
-//        Collections.sort(tempUnDividedUserList);
+       
+        /* For passing limited number of users
+        * Collections.sort(tempUnDividedUserList);
         List unDividedUserList = new ArrayList();
         for(int i = 0; i < 5; i++){
             unDividedUserList.add(tempUnDividedUserList.get(i));
-        }
-        List dividedUserList = userDivision.divideAllUser(unDividedUserList);
+        } */
+        
+        List dividedUserList = userDivision.divideAllUser(tempUnDividedUserList);
         dividedUserList = user.setCategorizedTimeToUser(dividedUserList);
         dividedUserList = user.generateUserFirstActivityCluster(dividedUserList);
         List facList = fac.getUserInSameClusterForFirstActivityClusterAsFACObject(dividedUserList);

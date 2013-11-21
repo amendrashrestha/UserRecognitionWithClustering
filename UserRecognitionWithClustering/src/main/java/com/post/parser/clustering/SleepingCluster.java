@@ -95,7 +95,7 @@ public class SleepingCluster {
 
     public void writeSleepingCluster(List<List<SleepingCluster>> allSleepingCluster) throws IOException{
         IOReadWrite ioRW = new IOReadWrite();
-        ioRW.checkAndCreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.SLEEPING_FOLDER_NAME);
+        ioRW.CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.SLEEPING_FOLDER_NAME);
         for(int i=0; i<allSleepingCluster.size(); i++){
             List<SleepingCluster> sleepingCluster = allSleepingCluster.get(i);
             ioRW.writeSleepingClusterData(sleepingCluster, String.valueOf(i+1));
