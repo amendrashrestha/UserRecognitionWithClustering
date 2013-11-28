@@ -50,8 +50,8 @@ public class UserAnalysis {
                     }
                     aliasList = ioReadWrite.convertTxtFileToAliasObjAndDivide(divisionTimes, basePath, directoryName, id, ext, aliasList);
                 }
-                System.out.println("Debug");
-                StylometricMatching sMatching = new StylometricMatching();
+                System.out.println("Time Stylo Analysis");
+                TimeAndStylometricMatching sMatching = new TimeAndStylometricMatching();
                 sMatching.executeStylo(aliasList);
             }
         }

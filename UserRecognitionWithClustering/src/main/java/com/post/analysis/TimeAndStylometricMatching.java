@@ -47,7 +47,7 @@ import java.util.Map;
  * @author frejoh
  *
  */
-public class StylometricMatching {
+public class TimeAndStylometricMatching {
 
     public List<String> functionWords; // Contains the function words we are using
     private static String path = "C:/Users/ITE/Documents/NetBeansProjects/BoardAliasMatching/src/Utilities/function_words.txt"; //Change to the correct path;
@@ -63,7 +63,7 @@ public class StylometricMatching {
     HashSet matchedUserSet = new HashSet();
     static HashMap<Integer, HashSet<Integer>> userResult = new HashMap<Integer, HashSet<Integer>>();
 
-    public StylometricMatching() throws SQLException {
+    public TimeAndStylometricMatching() throws SQLException {
         functionWords = new ArrayList<String>();
         loadFunctionWords();
         rank = new ArrayList<Integer>();
@@ -289,7 +289,7 @@ public class StylometricMatching {
                 alias.addToFeatureVectorPostList(countWordLengths(wordsInPost), 293, cnt);
                 alias.addToFeatureVectorPostList(countCharactersAZ(post), 313, cnt);
                 alias.addToFeatureVectorPostList(countSpecialCharacters(post), 339, cnt);
-                alias.addToFeatureVectorPostList(countSentenceLengths(post), 359, cnt);
+                //alias.addToFeatureVectorPostList(countSentenceLengths(post), 359, cnt);
                 cnt++;
             }
 
@@ -378,7 +378,7 @@ public class StylometricMatching {
     /**
      * For test purpose Calculate similarity between 1st user of list with rest
      * of the user in list. magnitude of posted time is normalized before
-     * calculating Euclidean distance between two users
+     * calculating Manhattan distance between two users
      */
     public void compareAllPairsOfAliases() throws SQLException {
         tempDisplayInfo = new ArrayList<List>();
@@ -388,7 +388,10 @@ public class StylometricMatching {
             double styloMatch = 0.0;
             String user1 = aliases.get(0).getUser();
             String user2 = aliases.get(i).getUser();
-            
+
+            /**
+             * calculate stylo for alias
+             */
             List user1featVector = aliases.get(0).getFeatureVector();
             List user2featVector = aliases.get(i).getFeatureVector();
             styloMatch = compareFeatureVectors(user1featVector, user2featVector);
@@ -397,14 +400,25 @@ public class StylometricMatching {
             /**
              * calculating time vector for alias
              */
-          /*  double[] user1timeVector = aliases.get(0).getTimeVector();
-            double[] user2timeVector = aliases.get(i).getTimeVector(); */
-            
             double timeMatch = 0.0;
-            float time = (float) timeMatch;
+            double[] user1timeVector = aliases.get(0).getTimeVector();
+            double[] user2timeVector = aliases.get(i).getTimeVector();
 
-            double fusionMatch = 0.0;
-            float fusion = (float) fusionMatch;
+            int timeVectorSize = 24;
+
+            double sum1 = 0;
+            double sum2 = 0;
+            for (int k = 0; k < timeVectorSize; k++) {
+                sum1 = sum1 + user1timeVector[k];
+                sum2 = sum2 + user2timeVector[k];
+            }
+            for (int k = 0; k < timeVectorSize; k++) {
+                user1timeVector[k] = user1timeVector[k] / sum1;
+                user2timeVector[k] = user2timeVector[k] / sum2;
+            }
+
+            timeMatch = calculateManhattanTimeVector(user1timeVector, user2timeVector);
+            float time = (float) timeMatch;
 
             tempList.add(user1);
             tempList.add(user2);
@@ -413,25 +427,42 @@ public class StylometricMatching {
 
             tempDisplayInfo.add(tempList);
         }
-        searchItemfromList(tempDisplayInfo);
+        fuseTimeAndStylo(tempDisplayInfo);
         tempDisplayInfo.clear();
     }
 
-    public void searchItemfromList(List info) {
+    public void fuseTimeAndStylo(List info) {
         List tempInfo = new ArrayList();
         tempInfo.addAll(info);
-        //System.out.println("SEARCH ITEM FROM LIST: " + tempInfo);
-
+        System.out.println("List: ");
+        for(Object a : info){
+            System.out.println(a);
+        }
         List sortedStyloList = new ArrayList();
+        List sortedTimeList = new ArrayList();
 
         sortedStyloList = getsortedStylo(tempInfo);
+        sortedTimeList = getsortedTime(tempInfo);
+        
+        System.out.println("Stylo List");
+        for(Object a : sortedStyloList){
+            System.out.println(a);
+        }
+        System.out.println("Time List");
+        for(Object a : sortedTimeList){
+            System.out.println(a);
+        }
 
         Iterator<List> itr = tempInfo.iterator();
         while (itr.hasNext()) {
             List secondList = itr.next();
+
             String tempUser = secondList.get(1).toString();
             int foundStylo = -1;
+            int foundTime = -1;
+
             Iterator<List> styloItr = sortedStyloList.iterator();
+            Iterator<List> timeItr = sortedTimeList.iterator();
 
             int counter = 1;
             while (styloItr.hasNext() && foundStylo == -1) {
@@ -443,11 +474,22 @@ public class StylometricMatching {
                 }
                 counter++;
             }
-            double fusionValue = 0.0;
-            fusionValue = (foundStylo);
+
+            int timeCounter = 1;
+            while (timeItr.hasNext() && foundTime == -1) {
+                List tempTimeList = timeItr.next();
+                String tempTimeUser = tempTimeList.get(1).toString();
+
+                if (tempTimeUser.equals(tempUser)) {
+                    foundTime = timeCounter;
+                }
+                timeCounter++;
+            }
+            int fusionValue = 0;
+            fusionValue = (foundStylo + foundTime) / 2;
             secondList.add(fusionValue);
         }
-        findSimilar(sortedStyloList);
+        sortListWithFusionValue(sortedStyloList);
     }
 
     /**
@@ -455,23 +497,26 @@ public class StylometricMatching {
      *
      * @param info
      */
-    public void displayValue(List info) {
+    public void sortListWithFusionValue(List info) {
         List tempdisplayInfo = new ArrayList();
         tempdisplayInfo.addAll(info);
-        //System.out.println("Temp Display Info: " + tempdisplayInfo);
+        System.out.println("Temp Display Info: ");
+        
+        for(Object a :  tempdisplayInfo){
+            System.out.println(a);
+        }
 
         Collections.sort(tempdisplayInfo, new Comparator<List>() {
             @Override
             public int compare(List o1, List o2) {
                 Double firstNumber = Double.parseDouble(o1.get(4).toString());
                 Double secondNumber = Double.parseDouble(o2.get(4).toString());
-
                 return firstNumber.compareTo(secondNumber);
             }
         });
 
-        findSimilar(tempdisplayInfo);
-        List firstRow = (List) tempdisplayInfo.get(0);
+        createRank(tempdisplayInfo);
+        // List firstRow = (List) tempdisplayInfo.get(0);
         //  System.out.println("Similar Row: " + firstRow);
 //        tableModel.SetValue(tempdisplayInfo); // sending data to display in test table
     }
@@ -479,9 +524,12 @@ public class StylometricMatching {
     /**
      * find similar user within the list
      */
-    public void findSimilar(List tempdisplayInfo) {
+    public void createRank(List tempdisplayInfo) {
         int infoSize = tempdisplayInfo.size();
-        //System.out.println(tempdisplayInfo);
+        System.out.println("Sorted with Fusion");
+        for(Object a : tempdisplayInfo){
+            System.out.println(a);
+        }
         int index = 0;
 
         for (int i = 0; i < infoSize; i++) {
@@ -503,8 +551,8 @@ public class StylometricMatching {
         }
         frequencyCount(index);
         System.out.println("\nResult: " + userResult);
+        
         for (Map.Entry<Integer, HashSet<Integer>> MapEntry : userResult.entrySet()) {
-
             Integer tempRank = MapEntry.getKey();
             if (tempRank.equals(1)) {
                 HashSet users = MapEntry.getValue();
@@ -613,6 +661,24 @@ public class StylometricMatching {
         });
         //System.out.println("After sorting: " + tempTimeinfo);
         return tempTimeinfo;
+    }
+
+    /**
+     * Calculate Manhattan distance between two users
+     *
+     * @param sequence1
+     * @param sequence2
+     * @return
+     */
+    public static double calculateManhattanTimeVector(double[] sequence1, double[] sequence2) {
+
+        double manhattanDistance = 0.0;
+        for (int i = 0; i < sequence1.length; i++) {
+            double firstElementsequence1 = sequence1[i];
+            double firstElementsequence2 = sequence2[i];
+            manhattanDistance = manhattanDistance + Math.abs(firstElementsequence2 - firstElementsequence1);
+        }
+        return manhattanDistance;
     }
 
     /**

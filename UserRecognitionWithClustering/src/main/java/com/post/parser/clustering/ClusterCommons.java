@@ -14,32 +14,6 @@ import java.util.List;
  * @author Batman
  */
 public class ClusterCommons {
-
-    /*
-    public List getUserInSameClusterForFirstActivityCluster(List<User> userList) {
-        List<FirstActivityCluster> returnList = new ArrayList();
-        FirstActivityCluster fac;
-        int[] matchedTimeFrame;
-        for (User firstUser : userList) {
-            for (int i = 0; i < userList.size(); i++) {
-                User secondUser = (User) userList.get(i);
-                if ((secondUser.getId() == firstUser.getId()) && (!secondUser.getType().equals(firstUser.getType()))) {
-                    matchedTimeFrame = getMatchedTimeFrame(firstUser.getFirstActivityVector(), secondUser.getFirstActivityVector());
-                    if (checkIfUserHasCommonTimeFrame(matchedTimeFrame)) {
-                        fac = new FirstActivityCluster();
-                        fac.setPostTimeVector(matchedTimeFrame);
-                        fac.setUserID(firstUser.getId());
-                        returnList.add(fac);
-                    }
-                    userList.remove(secondUser);
-                    break;
-                }
-            }
-            userList.remove(firstUser);
-        }
-        return returnList;
-    }
-*/
     
     public boolean checkIfUserHasCommonTimeFrame(int[] matchedTimeFrame) {
         boolean flag = false;

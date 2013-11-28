@@ -19,7 +19,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.post.main.FileCreaterMain</mainClass>
+                            <mainClass>com.post.main.AnalyzingUsersMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -29,7 +29,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.post.main.FileCreaterMain</mainClass>
+                            <mainClass>com.post.main.AnalyzingUsersMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

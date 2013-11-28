@@ -6,15 +6,23 @@ package com.post.parser.IOHandler;
  */
 public class IOProperties {
 
-    public static final String XML_DATA_FILE_PATH = "C:\\Users\\ITE\\Downloads\\1998\\";
-    public static final String All_ACTIVITY_BASE_PATH = "C:\\Users\\ITE\\Downloads\\1998\\ActivityData\\";
+    public static final String XML_DATA_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2008\\posts\\";
+//    public static final String XML_DATA_FILE_PATH = "C:\\Users\\ITE\\Downloads\\1998\\";
+    public static final String All_ACTIVITY_BASE_PATH = "C:\\Users\\ITE\\Downloads\\2008\\ActivityData\\";
+//    public static final String All_ACTIVITY_BASE_PATH = "C:\\Users\\ITE\\Downloads\\1998\\ActivityData\\";
     /**
      * This is the base path for all the created data throughout the experiment. 
      * This path has to exist before running the program
      */
-    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\1998\\UsersPost\\";
+    //For creating first activity peak you need to pass the folder name too
+//    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2008\\UsersPost\\150K\\";
     
-    public static final String CLUSTER_FOLDER_NAME = "Cluster Data";
+    //For other activity thing
+    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Desktop\\UsersPost_06_07_08\\";
+
+//    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\1998\\UsersPost\\";
+    
+    public static final String CLUSTER_FOLDER_NAME = "ClusterData";
     /**
      * Following are the text file and text seperator for reading the data from XML and writing it to text file
      */

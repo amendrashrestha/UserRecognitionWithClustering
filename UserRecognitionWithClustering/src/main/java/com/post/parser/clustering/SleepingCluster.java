@@ -53,7 +53,7 @@ public class SleepingCluster {
         List<SleepingCluster> returnList = new ArrayList();
         SleepingCluster sc;
         int[] matchedTimeFrame;
-        while(userList.size() != 0){
+        while(!userList.isEmpty()){
             User firstUser = (User) userList.get(0);
             for (int i = 0; i < userList.size(); i++) {
                 User secondUser = (User) userList.get(i);

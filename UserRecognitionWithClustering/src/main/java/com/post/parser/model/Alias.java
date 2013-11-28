@@ -33,7 +33,7 @@ public class Alias {
     }
 
     public Alias() {
-        setNrOfFeatures(293 + 20 + 26 + 21 + 6);
+        setNrOfFeatures(293 + 20 + 26 + 21);
     }
 
     @Override

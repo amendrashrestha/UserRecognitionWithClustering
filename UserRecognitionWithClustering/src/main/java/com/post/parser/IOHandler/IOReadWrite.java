@@ -3,12 +3,10 @@ package com.post.parser.IOHandler;
 import com.post.parser.clustering.FirstActivityCluster;
 import com.post.parser.clustering.SecondActivityCluster;
 import com.post.parser.clustering.SleepingCluster;
-import com.post.parser.clustering.UserDivision;
 import com.post.parser.controller.FileDirectoryHandler;
+import com.post.parser.model.Alias;
 import com.post.parser.model.Posts;
 import com.post.parser.model.User;
-import com.post.analysis.StylometricMatching;
-import com.post.parser.model.Alias;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -63,7 +61,10 @@ public class IOReadWrite {
     public String getFolderName(String userId) {
         String folderName = "";
         int userID = Integer.valueOf(userId);
-        if (userID > 0 && userID <= 50000) {
+        
+        if (userID > 0 && userID <= 25000) {
+            folderName = "25K";
+        } else if (userID > 25000 && userID <= 50000) {
             folderName = "50K";
         } else if (userID > 50000 && userID <= 100000) {
             folderName = "100K";
@@ -118,9 +119,9 @@ public class IOReadWrite {
 
     public File checkAndCreateFile(String fileName) throws IOException {
         File file = new File(fileName);
-        if (file.exists()) {
-            file.delete();
-        }
+        /* if (file.exists()) {
+         file.delete();
+         }*/
         file.createNewFile();
         return file;
     }
@@ -147,6 +148,27 @@ public class IOReadWrite {
         StringBuilder stringBuilder = new StringBuilder();
         try {
             File file = new File(basePath + directoryName + "/" + fileName + extension);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line = null;
+            if (file.exists()) {
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw ex;
+        }
+        String a = stringBuilder.substring(0, (stringBuilder.length() - (IOProperties.DATA_SEPERATOR).length())).toString();
+        return a;
+    }
+
+    public String readTxtFileAsString(String basePath, String fileName, String extension) throws FileNotFoundException, IOException {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            File file = new File(basePath + "/" + fileName + extension);
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line = null;
             if (file.exists()) {
@@ -198,6 +220,42 @@ public class IOReadWrite {
         return user;
     }
 
+    public User convertTxtFileToUserObj(String basePath, String fileName, String extension) throws FileNotFoundException, IOException {
+        String userPostAsString = readTxtFileAsString(basePath, fileName, extension);
+        String temp[] = null;
+        User user = new User();
+        List postList = new ArrayList();
+        user.setId(Integer.valueOf(fileName));
+        if (userPostAsString.contains(IOProperties.DATA_SEPERATOR)) {
+            temp = userPostAsString.split(IOProperties.DATA_SEPERATOR);
+        } else {
+            temp = new String[1];
+            temp[0] = userPostAsString;
+
+        }
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].toString().length() == 8) {
+                temp[i] = temp[i].toString() + "  ";
+            }
+            Posts posts = new Posts();
+            String date = temp[i].substring(0, 8);
+            if (date.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                posts.setTime(date);
+//                posts.setContent(temp[i].substring(9, temp[i].length()));
+                posts.setContent("");
+                postList.add(posts);
+                //System.out.println(date);
+            } else {
+                continue;
+
+            }
+        }
+        user.setUserPost(postList);
+
+        return user;
+    }
+
     public List getAllFilesInADirectory(String directoryName) {
         List returnList = new ArrayList();
         File folder = new File(directoryName);
@@ -219,17 +277,22 @@ public class IOReadWrite {
      */
     public List<User> getAllUsersAsObject() throws FileNotFoundException, IOException {
         IOReadWrite ioRW = new IOReadWrite();
+        System.out.println(IOProperties.INDIVIDUAL_USER_FILE_PATH);
         List directoryList = ioRW.getAllDirectories(IOProperties.INDIVIDUAL_USER_FILE_PATH);
         List allFiles = new ArrayList();
         List allFilesSize = new ArrayList();
         for (int i = 0; i < directoryList.size(); i++) {
             allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList.get(i));
-            for (int j = 0; j < allFilesSize.size(); j++) {
-                User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, directoryList.get(i).toString(), allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);
-                if (user.getUserPost().size() > 60) {
-                    allFiles.add(user);
-                }
+//        allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH);
+        for (int j = 0; j < allFilesSize.size(); j++) {
+             User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, directoryList.get(i).toString(), 
+             allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);
+            /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
+                    allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
+            if (user.getUserPost().size() > 60) {
+                allFiles.add(user);
             }
+             }
         }
         return allFiles;
     }
@@ -392,7 +455,6 @@ public class IOReadWrite {
     }
 
     /**
-     * Sirji ek choti yo part heri deu na hai...
      *
      * @param filePath
      * @throws FileNotFoundException
@@ -472,7 +534,7 @@ public class IOReadWrite {
      */
     public void writeStylometricClusterData(int User, int fileName) throws IOException {
         CreateDirectory(IOProperties.XML_DATA_FILE_PATH, IOProperties.CLUSTER_FOLDER_NAME);
-        String completeFileNameNPath = IOProperties.XML_DATA_FILE_PATH + "\\" + String.valueOf(IOProperties.CLUSTER_FOLDER_NAME)
+        String completeFileNameNPath = IOProperties.XML_DATA_FILE_PATH + String.valueOf(IOProperties.CLUSTER_FOLDER_NAME)
                 + "\\" + String.valueOf(fileName)
                 + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
         File file = CreateFile(completeFileNameNPath);
@@ -495,10 +557,6 @@ public class IOReadWrite {
 //    HttpURl Http:www.amendra.com.np/something.html
 //            
 //    String basePath, package, className, ()
-    
-            
-   
-    
     public List<String> readClusterData(String fileName) throws FileNotFoundException, IOException {
         File file = new File(fileName);
         List<String> dataList = new ArrayList<String>();
@@ -507,7 +565,7 @@ public class IOReadWrite {
         if (file.exists()) {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             while ((line = reader.readLine()) != null) {
-                    dataList.add(line);
+                dataList.add(line);
             }
         }
         return dataList;
@@ -571,7 +629,7 @@ public class IOReadWrite {
         return alias;
     }
 
-    public List<Alias> convertTxtFileToAliasObjAndDivide(int divisionFlag, String basePath, String directoryName, 
+    public List<Alias> convertTxtFileToAliasObjAndDivide(int divisionFlag, String basePath, String directoryName,
             String fileName, String extension, List<Alias> aliasList) throws FileNotFoundException, IOException {
         String userPostAsString = readTxtFileAsString(basePath, directoryName, fileName, extension);
         String temp[] = null;
@@ -618,11 +676,33 @@ public class IOReadWrite {
             aliasA.setPosts(postListA);
             aliasList.add(0, aliasA);
         }
-        
+
         aliasB.setPostTime(timeListB);
         aliasB.setPosts(postListB);
         aliasList.add(aliasB);
 
+        return aliasList;
+    }
+
+    /**
+     * returns user as an object
+     *
+     * @param userIDList
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public List<Alias> getUserAsAlias(List<String> userIDList) throws FileNotFoundException, IOException {
+
+        Alias alias = new Alias();
+        List<Alias> aliasList = new ArrayList<Alias>();
+        IOReadWrite ioReadWrite = new IOReadWrite();
+
+        for (int i = 0; i < userIDList.size(); i++) {
+            alias = ioReadWrite.convertTxtFileToAliasObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
+                    ioReadWrite.getFolderName(userIDList.get(i)), userIDList.get(i), IOProperties.USER_FILE_EXTENSION);
+            aliasList.add(alias);
+        }
         return aliasList;
     }
 }

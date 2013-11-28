@@ -12,10 +12,10 @@ import java.util.List;
 /**
  * @author Batman
  */
-
 public class User {
+
     private int id;
-    private List<Posts> userPost; 
+    private List<Posts> userPost;
     private String type;
     /*
      * This variable contains the total number of posts, posted in an individual time frame,
@@ -55,15 +55,14 @@ public class User {
     /**
      * @return the userPost
      */
-    
-    public User(){
+    public User() {
         this.type = UserType.UNDEFINED;
-        this.classifiedTimeVector = new int[]{0,0,0,0,0,0};
-        this.firstActivityVector = new int[]{0,0,0,0,0,0};
-        this.sleepingClusterVector = new int[]{0,0,0,0,0,0};
-        this.secondActivityVector = new int[]{0,0,0,0,0,0};
+        this.classifiedTimeVector = new int[]{0, 0, 0, 0, 0, 0};
+        this.firstActivityVector = new int[]{0, 0, 0, 0, 0, 0};
+        this.sleepingClusterVector = new int[]{0, 0, 0, 0, 0, 0};
+        this.secondActivityVector = new int[]{0, 0, 0, 0, 0, 0};
     }
-    
+
     public List<Posts> getUserPost() {
         return userPost;
     }
@@ -159,16 +158,14 @@ public class User {
         this.secondActivityVector = secondActivityVector;
     }
 
-   
     /**
      * @Desc This function populates the "classifiedTimeVector" variable of the
-     * com.post.parser.model.User class. It gives the total number of posts in the specified time
-     * range which has been described in getTimeCategory(int hours) in this
-     * class.
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified time range which has been described in getTimeCategory(int
+     * hours) in this class.
      * @param List<User>
      * @return List<User>
      */
-    
     public List<User> setCategorizedTimeToUser(List<User> userList) {
         ClusterCommons cc = new ClusterCommons();
         for (User user : userList) {
@@ -184,16 +181,16 @@ public class User {
         }
         return userList;
     }
-    
+
     /**
-     * @Desc This function populates the "firstActivityVector" variable of the 
-     * com.post.parser.model.User class. It checks if the users post in each time frame is 
-     * greater than the minimum criteria. If it meets the criteria than the value in int[]
-     * of particular time frame is set to 1 or else it is set 0.
-     * @param List<User> 
+     * @Desc This function populates the "firstActivityVector" variable of the
+     * com.post.parser.model.User class. It checks if the users post in each
+     * time frame is greater than the minimum criteria. If it meets the criteria
+     * than the value in int[] of particular time frame is set to 1 or else it
+     * is set 0.
+     * @param List<User>
      * @return List<User>
      */
-    
     public List<User> generateUserFirstActivityCluster(List<User> userList) {
         for (User user : userList) {
             List postList = user.getUserPost();
@@ -205,17 +202,24 @@ public class User {
                     firstActivityCluster[i] = 1;
                 }
             }
-             user.setFirstActivityVector(firstActivityCluster);
+            user.setFirstActivityVector(firstActivityCluster);
         }
         return userList;
     }
-    
-     public List<User> generateUserSleepingCluster(List<User> userList){
-        for(User user: userList){
+
+    /**
+     * if user has posted less than or equal to 5 messages then it will be
+     * consider as his sleeping time
+     *
+     * @param userList
+     * @return
+     */
+    public List<User> generateUserSleepingCluster(List<User> userList) {
+        for (User user : userList) {
             int[] sleepingCluster = user.getSleepingClusterVector();
             int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
-            for(int i=0; i< sleepingCluster.length; i++){
-                if(tempClassifiedTimeVector[i] == 0){
+            for (int i = 0; i < sleepingCluster.length; i++) {
+                if (tempClassifiedTimeVector[i] <= 5) {
                     sleepingCluster[i] = 1;
                 }
             }
@@ -223,9 +227,9 @@ public class User {
         }
         return userList;
     }
-     
-    public List<User> generateUserSecondActivityCluster(List<User> userList){
-        for(User user: userList){
+
+    public List<User> generateUserSecondActivityCluster(List<User> userList) {
+        for (User user : userList) {
             List postList = user.getUserPost();
             int requiredPostValue = (int) (0.2 * postList.size());
             int[] secondActivityCluster = user.getSecondActivityVector();
@@ -235,16 +239,16 @@ public class User {
                     secondActivityCluster[i] = 1;
                 }
             }
-             user.setSecondActivityVector(secondActivityCluster);
+            user.setSecondActivityVector(secondActivityCluster);
         }
         return userList;
     }
-    
-    public List<User> getInitialUserForSleepingCluster(List<FirstActivityCluster> facList, List<User> allUserList){
+
+    public List<User> getInitialUserForSleepingCluster(List<FirstActivityCluster> facList, List<User> allUserList) {
         List<User> returnUserList = new ArrayList<User>();
-        for(FirstActivityCluster fac: facList){
-            for(User user: allUserList){
-                if(fac.getUserID() == user.getId()){
+        for (FirstActivityCluster fac : facList) {
+            for (User user : allUserList) {
+                if (fac.getUserID() == user.getId()) {
                     returnUserList.add(user);
                     break;
                 }
@@ -255,28 +259,29 @@ public class User {
 
     // This function removes the post of the user which are included in the first activty cluster, and gives only those user which 
     // which lies on the sleeping cluster
-    public List<User> getInitialUserForSecondActivityCluster(List<FirstActivityCluster> facList, List<SleepingCluster> scList, List<User> allUserList){
+    public List<User> getInitialUserForSecondActivityCluster(List<FirstActivityCluster> facList, List<SleepingCluster> scList, List<User> allUserList) {
         List<User> returnUserList = new ArrayList<User>();
-        for(SleepingCluster sc: scList){
-            for(User user: allUserList){
-                if(sc.getUserID() == user.getId()){
+        for (SleepingCluster sc : scList) {
+            for (User user : allUserList) {
+                if (sc.getUserID() == user.getId()) {
                     returnUserList.add(user);
                     break;
                 }
             }
         }
-        
+
         ClusterCommons cc = new ClusterCommons();
-        for(User user: returnUserList){
-            for(FirstActivityCluster facObj: facList){
-                if(facObj.getUserID() == user.getId()){
+        for (User user : returnUserList) {
+            System.out.println("Before Deleting" + user.getId() + "-->" + user.getUserPost().size());
+            for (FirstActivityCluster facObj : facList) {
+                if (facObj.getUserID() == user.getId()) {
                     int[] facTimeVector = facObj.getPostTimeVector();
                     List<Posts> postList = user.getUserPost();
                     List<Posts> toSetList = new ArrayList<Posts>();
-                    for(Posts post: postList){
+                    for (Posts post : postList) {
                         Timestamp ts = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd ").format(new Date()).concat(post.getTime()));
                         int timeCategory = cc.getTimeCategory(ts.getHours());
-                        if(facTimeVector[timeCategory] == 0){
+                        if (facTimeVector[timeCategory] == 0) {
                             toSetList.add(post);
                         }
                     }
@@ -284,6 +289,7 @@ public class User {
                     break;
                 }
             }
+            System.out.println("After Deleting" + user.getId() + "-->" + user.getUserPost().size());
         }
         return returnUserList;
     }
