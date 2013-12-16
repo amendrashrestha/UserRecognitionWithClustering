@@ -3,7 +3,7 @@ package com.post.parser.controller;
 import java.sql.SQLException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
-import com.post.parser.model.PostBean;
+import com.user.cluster.parser.model.PostBean;
 
 /**
  *
