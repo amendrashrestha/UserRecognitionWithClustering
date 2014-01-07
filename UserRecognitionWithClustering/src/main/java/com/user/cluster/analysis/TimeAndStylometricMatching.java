@@ -4,6 +4,8 @@ import com.user.cluster.IOHandler.IOProperties;
 import com.user.cluster.parser.model.Alias;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.net.URI;
+import java.net.URL;
 import java.sql.SQLException;
 import java.text.BreakIterator;
 import java.util.ArrayList;
@@ -53,7 +55,7 @@ import java.util.Set;
  */
 public class TimeAndStylometricMatching {
 
-    public Set<String> functionWords; // Contains the function words we are using
+    public List<String> functionWords; // Contains the function words we are using
     public List<Alias> aliases; // The aliases we are interested in to compare
     List userList;
     List username;
@@ -96,7 +98,7 @@ public class TimeAndStylometricMatching {
      * Load the list of function words from file
      */
     public void loadFunctionWords(String path) {
-        functionWords = new LinkedHashSet<String>();
+        functionWords = new ArrayList<String>();
         BufferedReader br;
         try {
             br = new BufferedReader(new FileReader(path));
@@ -120,15 +122,13 @@ public class TimeAndStylometricMatching {
      */
     public ArrayList<Float> countFunctionWords(List<String> words) {
         ArrayList<Float> tmpCounter = new ArrayList<Float>(Collections.nCopies(functionWords.size(), 0.0f));	// Initialize to zero
-        //System.out.println("Nr of function words is: " + functionWords.size());
-
-
         for (int i = 0; i < words.size(); i++) {
             String word = words.get(i).toLowerCase();
             if (functionWords.contains(word)) {
-                float value = (Float) tmpCounter.get(i);
+                int place = functionWords.indexOf(word);
+                float value = (Float) tmpCounter.get(place);
                 value++;
-                tmpCounter.set(i, value);
+                tmpCounter.set(place, value);
             }
         }
         // "Normalize" the values by dividing with length of the post (nr of words in the post)

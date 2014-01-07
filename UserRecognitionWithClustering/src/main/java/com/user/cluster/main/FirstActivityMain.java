@@ -12,6 +12,7 @@ import com.user.cluster.parser.model.ReturnSortedUserList;
 import com.user.cluster.parser.model.User;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class FirstActivityMain {
         User user = new User();
         FirstActivityCluster fac = new FirstActivityCluster();
         List<User> unDividedUserList = ioReadWrite.getAllUsersAsObject();
-        System.out.println("Users:");
+        /*System.out.println("Users :");
         for(User tempUser : unDividedUserList){
             System.out.println(tempUser.getId());
         }
@@ -45,12 +46,13 @@ public class FirstActivityMain {
         List dividedUserList = userDivision.divideAllUser(unDividedUserList);
         dividedUserList = user.setCategorizedTimeToUser(dividedUserList);
         dividedUserList = user.generateUserFirstActivityCluster(dividedUserList);
+        //dividedUserList = user.generateUserMostActiveCluster(dividedUserList);
         List facList = fac.getUserInSameClusterForFirstActivityClusterAsFACObject(dividedUserList);
 
         // This function writes the firstActivityCluster into file
         fac.writeFirstActivityCluster(facList);
 
-
+/*
         for (int i = 0; i < facList.size(); i++) {
             fac = (FirstActivityCluster) facList.get(i);
             System.out.println("The id of the user is:  " + fac.getUserID());
@@ -61,6 +63,7 @@ public class FirstActivityMain {
 
         System.out.println("The number of users before first Activity Cluster is: " + String.valueOf(unDividedUserList.size()));
         System.out.println("The number of users in first Activity Cluster is: " + String.valueOf(facList.size()));
+        * */
     }
 
 }

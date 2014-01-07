@@ -14,10 +14,10 @@ import java.util.List;
 public class SecondActivityCluster {
       
     private int userID;
-    private int[] postTimeVector;
+    private int[] userCluster;
 
     public SecondActivityCluster(){
-        this.postTimeVector = new int[]{0,0,0,0,0,0};
+        this.userCluster = new int[]{0,0,0,0,0,0};
     }
     
     /**
@@ -35,17 +35,17 @@ public class SecondActivityCluster {
     }
 
     /**
-     * @return the postTimeVector
+     * @return the userCluster
      */
-    public int[] getPostTimeVector() {
-        return postTimeVector;
+    public int[] getUserCluster() {
+        return userCluster;
     }
 
     /**
-     * @param postTimeVector the postTimeVector to set
+     * @param userCluster the userCluster to set
      */
-    public void setPostTimeVector(int[] postTimeVector) {
-        this.postTimeVector = postTimeVector;
+    public void setUserCluster(int[] userCluster) {
+        this.userCluster = userCluster;
     }
    
     /**
@@ -68,7 +68,7 @@ public class SecondActivityCluster {
                     matchedTimeFrame = cc.getMatchedTimeFrame(firstUser.getSecondActivityVector(), secondUser.getSecondActivityVector());
                     if (cc.checkIfUserHasCommonTimeFrame(matchedTimeFrame)) {
                         sacObj = new SecondActivityCluster();
-                        sacObj.setPostTimeVector(matchedTimeFrame);
+                        sacObj.setUserCluster(matchedTimeFrame);
                         sacObj.setUserID(firstUser.getId());
                         returnList.add(sacObj);
                     }
@@ -85,7 +85,7 @@ public class SecondActivityCluster {
         List<SecondActivityCluster> returnList = new ArrayList<SecondActivityCluster>();
         List<SleepingCluster> individualscUser = new ArrayList<SleepingCluster>();
         for(SleepingCluster scObj: scList){
-            if (scObj.getPostTimeVector()[scFrame] == 1) {
+            if (scObj.getUserCluster()[scFrame] == 1) {
                 individualscUser.add(scObj);
             }
         }

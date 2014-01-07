@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.post.graph;
+package com.user.cluster.main;
 
+import com.post.graph.CreatePostGraph;
 import com.user.cluster.IOHandler.IOReadWrite;
 import com.user.cluster.parser.model.User;
 import java.awt.BorderLayout;
@@ -14,14 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,7 +20,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -38,14 +28,14 @@ import javax.swing.event.DocumentListener;
  *
  * @author ITE
  */
-public final class GraphMaker {
+public final class PostGraphMain {
 
     public JPanel tempGraphPanel;
     JPanel graphPanel = new JPanel();
     JButton btnOK;
-    makeGraph maker = new makeGraph();
+    CreatePostGraph maker = new CreatePostGraph();
 
-    public GraphMaker() throws SQLException, FileNotFoundException, IOException {
+    public PostGraphMain() throws SQLException, FileNotFoundException, IOException {
         Border redline = BorderFactory.createLineBorder(Color.red);
         final Border greenline = BorderFactory.createLineBorder(Color.green);
         JButton btnNew = new JButton("New");
@@ -53,17 +43,17 @@ public final class GraphMaker {
         selectID.setSize(20, 100);
         IOReadWrite io = new IOReadWrite();
         //getting userID from text file and setting into combo box
-        final JComboBox userID = new JComboBox();
+        final JComboBox cmbUserID = new JComboBox();
         List<User> userList = io.getAllUsersAsObject();
         for (int i = 0; i < userList.size(); i++) {
             User user = userList.get(i);
-            userID.addItem(user.getId());
+            cmbUserID.addItem(user.getId());
         }
 
-        userID.addActionListener(new ActionListener() {
+        cmbUserID.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                int tempUser = (Integer) userID.getSelectedItem();
+                int tempUser = (Integer) cmbUserID.getSelectedItem();
                 tempGraphPanel = maker.createTimegraphPanel(tempUser);
                 graphPanel.add(tempGraphPanel);
                 graphPanel.setBorder(greenline);
@@ -113,7 +103,7 @@ public final class GraphMaker {
             }
         });
 
-        JFrame frame = new JFrame("Graph Maker");
+        JFrame frame = new JFrame("User Posts Graph");
 
         final JPanel gui = new JPanel(new BorderLayout());
         gui.setBorder(redline);
@@ -124,7 +114,7 @@ public final class GraphMaker {
         plafComponents.add(selectID);
         plafComponents.add(txtUserID);
         plafComponents.add(btnOK);
-        plafComponents.add(userID);
+        plafComponents.add(cmbUserID);
         plafComponents.add(btnNew);
 
         btnNew.addActionListener(new ActionListener() {
@@ -141,15 +131,13 @@ public final class GraphMaker {
         gui.add(graphPanel, BorderLayout.SOUTH);
 
         frame.setContentPane(gui);
-
         frame.setSize(710, 400);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
     }
 
     public static void main(String args[]) throws SQLException, FileNotFoundException, IOException {
-        GraphMaker init = new GraphMaker();
+        PostGraphMain init = new PostGraphMain();
     }
 }

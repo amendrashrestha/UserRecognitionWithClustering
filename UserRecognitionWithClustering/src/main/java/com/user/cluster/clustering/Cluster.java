@@ -9,6 +9,7 @@ import com.user.cluster.parser.model.User;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,16 +21,21 @@ public class Cluster {
     public Cluster(){
     }
     
-    // There are still something to be done in this function
-   /* public List<User> getAllClusterizedUser() throws FileNotFoundException, IOException{
-        List<User> userList = new ArrayList<User>();
-        IOReadWrite ioReadWrite = new IOReadWrite();
-        List allUserList = ioReadWrite.getAllUsersAsObject();
+    // Incomplete
+    public HashMap<Integer, int[]> getAllClusterizedUser(List<User> allUserList) throws FileNotFoundException, IOException{
+        HashMap<Integer, int[]> userList = new HashMap<Integer, int[]>();
+ 
         List<FirstActivityCluster> facList = getFirstActivityCluster(allUserList);
         List<SleepingCluster> scList = getSleepingCluster(facList, allUserList);
         List<SecondActivityCluster> sacList = getSecondActivityCluster(facList, scList, allUserList);
+        
+        for(SecondActivityCluster a : sacList){
+            int getUserID = a.getUserID();
+            int[] userClusterInfo = a.getUserCluster();
+            userList.put(getUserID, userClusterInfo);
+        }
         return userList;
-    }*/
+    }
     
     /**
      * This function gives the users in the first activity cluster
@@ -74,7 +80,7 @@ public class Cluster {
      * @param List<User>
      * @return 
      */
-   /* public List<SecondActivityCluster> getSecondActivityCluster(List<FirstActivityCluster> facList, List<SleepingCluster> scList, List<User> userList){
+    public List<SecondActivityCluster> getSecondActivityCluster(List<FirstActivityCluster> facList, List<SleepingCluster> scList, List<User> userList){
         List<SecondActivityCluster> sacList = new ArrayList<SecondActivityCluster>();
         User userObj = new User();
         SecondActivityCluster sacObj = new SecondActivityCluster();
@@ -85,5 +91,5 @@ public class Cluster {
         dividedUserList = userObj.generateUserSecondActivityCluster(dividedUserList);
         sacList = sacObj.getUserInSameClusterForSecondActivityCluster(dividedUserList);
         return sacList;
-    }*/
+    }
 }

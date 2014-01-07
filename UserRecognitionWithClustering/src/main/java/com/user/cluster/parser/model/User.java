@@ -8,7 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author ITE
@@ -208,6 +212,78 @@ public class User {
         return userList;
     }
 
+    /*
+     * Generates first activity user cluster by taking the maximum number
+     * of posts posted by user
+     */
+    public List<User> generateUserMostActiveCluster(List<User> userList) {
+        for (User user : userList) {
+            int[] firstActivityCluster = user.getFirstActivityVector();
+            int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
+            int max = 0;
+            int maxIndex = 0;
+            for (int i = 0; i < tempClassifiedTimeVector.length; i++) {
+                if (tempClassifiedTimeVector[i] > max) {
+                    max = tempClassifiedTimeVector[i];
+                    maxIndex = i;
+                }
+            }
+            firstActivityCluster[maxIndex] = 1;
+            user.setFirstActivityVector(firstActivityCluster);
+        }
+        return userList;
+    }
+
+    public HashMap<Integer, Set> generateUserCluster(List<User> userList) {
+        HashMap<Integer, Set> userCluster;
+        userCluster = new HashMap<Integer, Set>();
+        Set<Integer> firstClusterList = new TreeSet<Integer>();
+        Set<Integer> secondClusterList = new TreeSet<Integer>();
+        Set<Integer> thirdClusterList = new TreeSet<Integer>();
+        Set<Integer> fourthClusterList = new TreeSet<Integer>();
+        Set<Integer> fifthClusterList = new TreeSet<Integer>();
+        Set<Integer> sixthClusterList = new TreeSet<Integer>();
+        for (User user : userList) {
+            int[] firstActivityCluster = user.getFirstActivityVector();
+            int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
+            int max = 0;
+            int maxIndex = 0;
+            for (int i = 0; i < tempClassifiedTimeVector.length; i++) {
+                if (tempClassifiedTimeVector[i] > max) {
+                    max = tempClassifiedTimeVector[i];
+                    maxIndex = i;
+                }
+            }
+            if (maxIndex == 0) {
+                Integer tempuserID = user.getId();
+                firstClusterList.add(tempuserID);
+                userCluster.put(1, firstClusterList);
+            } else if (maxIndex == 1) {
+                int tempuserID = user.getId();
+                secondClusterList.add(tempuserID);
+                userCluster.put(2, secondClusterList);
+            } else if (maxIndex == 2) {
+                int tempuserID = user.getId();
+                thirdClusterList.add(tempuserID);
+                userCluster.put(3, thirdClusterList);
+            } else if (maxIndex == 3) {
+                int tempuserID = user.getId();
+                fourthClusterList.add(tempuserID);
+                userCluster.put(4, fourthClusterList);
+            } else if (maxIndex == 4) {
+                int tempuserID = user.getId();
+                fifthClusterList.add(tempuserID);
+                userCluster.put(5, fifthClusterList);
+            } else if (maxIndex == 5) {
+                int tempuserID = user.getId();
+                sixthClusterList.add(tempuserID);
+                userCluster.put(6, sixthClusterList);
+            }
+            //firstActivityCluster[maxIndex] = 1;
+        }
+        return userCluster;
+    }
+
     /**
      * if user has posted less than or equal to 5 messages then it will be
      * consider as his sleeping time
@@ -258,8 +334,16 @@ public class User {
         return returnUserList;
     }
 
-    // This function removes the post of the user which are included in the first activty cluster, and gives only those user which 
-    // which lies on the sleeping cluster
+    /**
+     * This function removes the post of the user which are included in the
+     * First Activity Cluster, and gives only those user which which lies on the
+     * sleeping cluster
+     *
+     * @param facList
+     * @param scList
+     * @param allUserList
+     * @return
+     */
     public List<User> getInitialUserForSecondActivityCluster(List<FirstActivityCluster> facList, List<SleepingCluster> scList, List<User> allUserList) {
         List<User> returnUserList = new ArrayList<User>();
         for (SleepingCluster sc : scList) {
@@ -273,10 +357,10 @@ public class User {
 
         ClusterCommons cc = new ClusterCommons();
         for (User user : returnUserList) {
-            System.out.println("Before Deleting" + user.getId() + "-->" + user.getUserPost().size());
+            System.out.println("Before Deleting " + user.getId() + "-->" + user.getUserPost().size());
             for (FirstActivityCluster facObj : facList) {
                 if (facObj.getUserID() == user.getId()) {
-                    int[] facTimeVector = facObj.getPostTimeVector();
+                    int[] facTimeVector = facObj.getUserCluster();
                     List<Posts> postList = user.getUserPost();
                     List<Posts> toSetList = new ArrayList<Posts>();
                     for (Posts post : postList) {
@@ -290,7 +374,7 @@ public class User {
                     break;
                 }
             }
-            System.out.println("After Deleting" + user.getId() + "-->" + user.getUserPost().size());
+            System.out.println("After Deleting " + user.getId() + "-->" + user.getUserPost().size());
         }
         return returnUserList;
     }

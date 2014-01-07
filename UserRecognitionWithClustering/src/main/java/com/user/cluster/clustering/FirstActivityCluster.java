@@ -6,10 +6,7 @@ import com.user.cluster.parser.model.Posts;
 import com.user.cluster.parser.model.User;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,10 +15,10 @@ import java.util.List;
 
 public class FirstActivityCluster {
     private int userID;
-    private int[] postsTimeVector;
+    private int[] userCluster;
     
     public FirstActivityCluster() {
-        this.postsTimeVector = new int[]{0,0,0,0,0,0};
+        this.userCluster = new int[]{0,0,0,0,0,0};
     }
     
     /**
@@ -42,15 +39,15 @@ public class FirstActivityCluster {
     /**
      * @return the userVector
      */
-    public int[] getPostTimeVector() {
-        return postsTimeVector;
+    public int[] getUserCluster() {
+        return userCluster;
     }
 
     /**
      * @param userVector the userVector to set
      */
-    public void setPostTimeVector(int[] postsTimeVector) {
-        this.postsTimeVector = postsTimeVector;
+    public void setUserCluster(int[] userCluster) {
+        this.userCluster = userCluster;
     }
     
     
@@ -74,7 +71,7 @@ public class FirstActivityCluster {
                     matchedTimeFrame = cc.getMatchedTimeFrame(firstUser.getFirstActivityVector(), secondUser.getFirstActivityVector());
                     if (cc.checkIfUserHasCommonTimeFrame(matchedTimeFrame)) {
                         fac = new FirstActivityCluster();
-                        fac.setPostTimeVector(matchedTimeFrame);
+                        fac.setUserCluster(matchedTimeFrame);
                         fac.setUserID(firstUser.getId());
                         returnList.add(fac);
                     }

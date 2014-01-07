@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
@@ -31,7 +31,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *
  * @author ITE
  */
-public class makeGraph {
+public class CreatePostGraph {
 
     List<String> firstUserTime;
     List<String> secondUserTime;

@@ -1,5 +1,7 @@
 package com.user.cluster.IOHandler;
 
+import java.net.URL;
+
 /**
  *
  * @author ITE
@@ -17,7 +19,7 @@ public class IOProperties {
     //For creating first activity peak you need to pass the folder name too
 //    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2008\\UsersPost\\150K\\";
     //For other activity thing
-    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\1998\\UsersPost\\";
+    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2008\\UsersPost\\";
 //    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2008\\UsersPostWithContent\\";
     public static final String CLUSTER_FOLDER_NAME = "ClusterData";
     /**
@@ -50,5 +52,5 @@ public class IOProperties {
     public static final String SECOND_ACTIVITY_FILE_NAME = "secondactivitycluster";
     public static final String SECOND_ACTIVITY_FILE_EXTENSION = ".txt";
     
-    public static final String FUNCTION_WORDS_PATH = "src\\main\\resources\\functionWord\\function_words.txt";
+    public static final String FUNCTION_WORDS_PATH = "src\\main\\resources\\functionWord\\function_words.txt\\";
 }

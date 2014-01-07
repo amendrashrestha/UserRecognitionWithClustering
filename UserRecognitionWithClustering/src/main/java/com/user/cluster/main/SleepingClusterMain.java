@@ -54,7 +54,7 @@ public class SleepingClusterMain {
             SleepingCluster scObj1 = (SleepingCluster) scList.get(j);
             System.out.println("The id of the user is:  " + scObj1.getUserID());
             uniqueSleepingUsersList.add(scObj1.getUserID());
-            int[] timeVec = scObj1.getPostTimeVector();
+            int[] timeVec = scObj1.getUserCluster();
             System.out.println("The time vector is:  " + String.valueOf(timeVec[0]) + " " + String.valueOf(timeVec[1]) + " " + String.valueOf(timeVec[2]) + " "
                     + String.valueOf(timeVec[3]) + " " + String.valueOf(timeVec[4]) + " " + String.valueOf(timeVec[5]));
             }

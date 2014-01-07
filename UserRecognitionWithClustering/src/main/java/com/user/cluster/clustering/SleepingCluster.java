@@ -15,10 +15,10 @@ import java.util.List;
 public class SleepingCluster {
    
     private int userID;
-    private int [] postTimeVector;
+    private int [] UserCluster;
 
     public SleepingCluster(){
-        this.postTimeVector = new int[]{0,0,0,0,0,0};
+        this.UserCluster = new int[]{0,0,0,0,0,0};
     }
     /**
      * @return the userID
@@ -37,15 +37,15 @@ public class SleepingCluster {
    /**
      * @return the postsTimeVector
      */
-    public int[] getPostTimeVector() {
-        return postTimeVector;
+    public int[] getUserCluster() {
+        return UserCluster;
     }
 
     /**
      * @param postsTimeVector the postsTimeVector to set
      */
-    public void setPostTimeVector(int[] postTimeVector) {
-        this.postTimeVector = postTimeVector;
+    public void setUserCluster(int[] UserCluster) {
+        this.UserCluster = UserCluster;
     }
     
     public List<SleepingCluster> getUserInSameClusterForSleepingCluster(List<User> userList) {
@@ -61,7 +61,7 @@ public class SleepingCluster {
                     matchedTimeFrame = cc.getMatchedTimeFrame(firstUser.getSleepingClusterVector(), secondUser.getSleepingClusterVector());
                     if (cc.checkIfUserHasCommonTimeFrame(matchedTimeFrame)) {
                         sc = new SleepingCluster();
-                        sc.setPostTimeVector(matchedTimeFrame);
+                        sc.setUserCluster(matchedTimeFrame);
                         sc.setUserID(firstUser.getId());
                         returnList.add(sc);
                     }
@@ -79,7 +79,7 @@ public class SleepingCluster {
         List<SleepingCluster> scList = new ArrayList<SleepingCluster>();
         List<FirstActivityCluster> individualFacUser = new ArrayList();
         for(FirstActivityCluster facObj: facList){
-            if (facObj.getPostTimeVector()[timeFrame] == 1) {
+            if (facObj.getUserCluster()[timeFrame] == 1) {
                 individualFacUser.add(facObj);
             }
         }

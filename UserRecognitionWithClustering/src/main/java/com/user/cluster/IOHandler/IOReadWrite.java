@@ -184,6 +184,27 @@ public class IOReadWrite {
         String a = stringBuilder.substring(0, (stringBuilder.length() - (IOProperties.DATA_SEPERATOR).length())).toString();
         return a;
     }
+    
+     /*public String readTxtFileAsString(List<String> document) throws FileNotFoundException, IOException {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            File file = new File(document);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line = null;
+            if (file.exists()) {
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            throw ex;
+        }
+        String a = stringBuilder.substring(0, (stringBuilder.length() - (IOProperties.DATA_SEPERATOR).length())).toString();
+        return a;
+    }*/
 
     public User convertTxtFileToUserObj(String basePath, String directoryName, String fileName, String extension) throws FileNotFoundException, IOException {
         String userPostAsString = readTxtFileAsString(basePath, directoryName, fileName, extension);
@@ -216,8 +237,50 @@ public class IOReadWrite {
             }
         }
         user.setUserPost(postList);
-
         return user;
+    }
+    
+    public User convertDocumentToObj(int userID, String post, String seperator) throws FileNotFoundException, IOException {
+        String temp[] = null;
+        User user = new User();
+        List postList = new ArrayList();
+        user.setId(userID);
+        if (post.contains(seperator)) {
+            temp = post.split(seperator);
+        } else {
+            temp = new String[1];
+            temp[0] = post;
+
+        }
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].toString().length() == 8) {
+                temp[i] = temp[i].toString() + "  ";
+            }
+            Posts posts = new Posts();
+            String date = temp[i].substring(0, 8);
+            if (date.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                posts.setTime(date);
+                posts.setContent(temp[i].substring(9, temp[i].length()));
+                postList.add(posts);
+            } else {
+                continue;
+
+            }
+        }
+        user.setUserPost(postList);
+        return user;
+    }
+    
+    
+    public List<User> getAllDocumentObj(List<String> document, String seperator) throws FileNotFoundException, IOException {
+        List<User> userList = new ArrayList();
+        for(int i = 0; i < document.size(); i++){
+            int ID = i + 1;
+            User user = convertDocumentToObj(ID, document.get(i), seperator);
+            userList.add(user);
+        }
+        return userList;
     }
 
     public User convertTxtFileToUserObj(String basePath, String fileName, String extension) throws FileNotFoundException, IOException {
@@ -289,6 +352,36 @@ public class IOReadWrite {
                         allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);
                 /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                  allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
+                if (user.getUserPost().size() > 60) {
+                    allFiles.add(user);
+                }
+            }
+        }
+        return allFiles;
+    }
+    
+    /**
+     * Return users as an object and returns only those users who has posted
+     * more than 60 messages in discussion board
+     *
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public List<User> getAllUsersAsObject(String path) throws FileNotFoundException, IOException {
+        IOReadWrite ioRW = new IOReadWrite();
+        System.out.println(path);
+        List directoryList = ioRW.getAllDirectories(path);
+        List allFiles = new ArrayList();
+        List allFilesSize = new ArrayList();
+        for (int i = 0; i < directoryList.size(); i++) {
+            allFilesSize = ioRW.getAllFilesInADirectory(path + directoryList.get(i));
+//        allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH);
+            for (int j = 0; j < allFilesSize.size(); j++) {
+                User user = ioRW.convertTxtFileToUserObj(path, directoryList.get(i).toString(),
+                        allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);
+                /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
+                 allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
                 if (user.getUserPost().size() > 20) {
                     allFiles.add(user);
                 }
@@ -325,14 +418,14 @@ public class IOReadWrite {
                 String[] splittedContent = line.split(" ");
                 fac.setUserID(Integer.valueOf(splittedContent[0].toString()));
                 String splittedTimeVector = splittedContent[1].toString();
-                int timeVector[] = fac.getPostTimeVector();
+                int timeVector[] = fac.getUserCluster();
 
                 for (int i = 0; i < 6; i++) {
                     if (!String.valueOf(splittedTimeVector.charAt(i)).equals("0")) {
                         timeVector[i] = 1;
                     }
                 }
-                fac.setPostTimeVector(timeVector);
+                fac.setUserCluster(timeVector);
                 firstActivityCluster.add(fac);
             }
         }
@@ -348,7 +441,7 @@ public class IOReadWrite {
         int[] timeVector;
         BufferedWriter output = new BufferedWriter(new FileWriter(file, true));
         for (FirstActivityCluster fac : firstActivityCluster) {
-            timeVector = fac.getPostTimeVector();
+            timeVector = fac.getUserCluster();
             String timeVectorAsString = "";
             for (int i = 0; i < timeVector.length; i++) {
                 timeVectorAsString = timeVectorAsString + String.valueOf(timeVector[i]);
@@ -367,7 +460,7 @@ public class IOReadWrite {
         int[] timeVector;
         BufferedWriter output = new BufferedWriter(new FileWriter(file, true));
         for (SleepingCluster scObj : sleepingCluster) {
-            timeVector = scObj.getPostTimeVector();
+            timeVector = scObj.getUserCluster();
             String timeVectorAsString = "";
             for (int i = 0; i < timeVector.length; i++) {
                 timeVectorAsString = timeVectorAsString + String.valueOf(timeVector[i]);
@@ -391,14 +484,14 @@ public class IOReadWrite {
                 String[] splittedContent = line.split(" ");
                 scObj.setUserID(Integer.valueOf(splittedContent[0].toString()));
                 String splittedTimeVector = splittedContent[1].toString();
-                int timeVector[] = scObj.getPostTimeVector();
+                int timeVector[] = scObj.getUserCluster();
 
                 for (int i = 0; i < 6; i++) {
                     if (!String.valueOf(splittedTimeVector.charAt(i)).equals("0")) {
                         timeVector[i] = 1;
                     }
                 }
-                scObj.setPostTimeVector(timeVector);
+                scObj.setUserCluster(timeVector);
                 sleepingCluster.add(scObj);
             }
         }
@@ -416,7 +509,7 @@ public class IOReadWrite {
             int[] timeVector;
             BufferedWriter output = new BufferedWriter(new FileWriter(file, true));
             for (SecondActivityCluster sacObj : secondActivityCluster) {
-                timeVector = sacObj.getPostTimeVector();
+                timeVector = sacObj.getUserCluster();
                 String timeVectorAsString = "";
                 for (int j = 0; j < timeVector.length; j++) {
                     timeVectorAsString = timeVectorAsString + String.valueOf(timeVector[j]);
@@ -721,4 +814,5 @@ public class IOReadWrite {
         }
         return aliasList;
     }
+
 }
