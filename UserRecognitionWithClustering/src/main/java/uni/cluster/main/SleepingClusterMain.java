@@ -13,7 +13,7 @@ import uni.cluster.parser.model.User;
 
 /**
  * This class generates the Sleeping Cluster taking users of each individual
- * First Activity Cluster.
+ * from First Activity Cluster.
  *
  * @author ITE
  */
@@ -36,8 +36,9 @@ public class SleepingClusterMain {
         List<SleepingCluster> allscList;
 
         for (int i = 0; i < FACSize; i++) {
-            allscList = new ArrayList<SleepingCluster>();
-            allscList = scObj.getIndiviudalClusterUserWOSplit(facList, i, allUserUnDividedUserList);
+            allscList = new ArrayList<>();
+//            allscList = scObj.getIndiviudalSleepingClusterUserWithSplit(facList, i, allUserUnDividedUserList);
+            allscList = scObj.getIndiviudalSleepingClusterUserWOSplit(facList, i, allUserUnDividedUserList);
             processSCUsers(allscList, (i + 1));
         }
         System.out.println("The total number of distinct sleeping users is: " + uniqueSleepingUsersList.size());

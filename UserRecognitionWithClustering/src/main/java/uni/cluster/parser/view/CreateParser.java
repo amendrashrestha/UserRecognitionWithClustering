@@ -30,16 +30,19 @@ public class CreateParser {
             post = parser.parsePost(initialFileName);
             userID = post.getUserID(post.getUser());
             if (Integer.valueOf(userID) != 0) {
-                String userPost = post.getCreatedPost();
-                String[] parts = userPost.split("T");
+                String postDateTime = post.getCreatedPost();
+                String postContent = post.getContent();
+                
+                String[] parts = postDateTime.split("T");
                 post.setCreatedPostDate(parts[0]);
                 post.setCreatedPost(parts[1].replace("Z", ""));
+                String postTime = post.getCreatedPost();
 
                 //write both time and text
-//                String getText = createContentToWrite(post.getCreated(), post.getContent());
+                String getText = createContentToWrite(postTime, postContent);
 
                 //writing only time
-                String getText = createContentToWrite(post.getCreatedPost());
+                //String getText = createContentToWrite(post.getCreatedPost());
                 ioRW.writeToFile(userID, getText);
             }
         }

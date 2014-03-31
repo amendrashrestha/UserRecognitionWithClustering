@@ -75,8 +75,8 @@ public class SleepingCluster {
         return returnList;
     }
 
-    public List<SleepingCluster> getIndiviudalClusterUserWithSplit(List<FirstActivityCluster> facList, int timeFrame, List<User> allUserUnDividedUserList) {
-        List<SleepingCluster> scList = new ArrayList<SleepingCluster>();
+    public List<SleepingCluster> getIndiviudalSleepingClusterUserWithSplit(List<FirstActivityCluster> facList, int timeFrame, List<User> allUserUnDividedUserList) {
+        List<SleepingCluster> scList = new ArrayList<>();
         List<FirstActivityCluster> individualFacUser = new ArrayList();
         for (FirstActivityCluster facObj : facList) {
             if (facObj.getUserCluster()[timeFrame] == 1) {
@@ -94,8 +94,8 @@ public class SleepingCluster {
         return scList;
     }
 
-    public List<SleepingCluster> getIndiviudalClusterUserWOSplit(List<FirstActivityCluster> facList, int timeFrame, List<User> allUserUnDividedUserList) {
-        List<SleepingCluster> scList = new ArrayList<SleepingCluster>();
+    public List<SleepingCluster> getIndiviudalSleepingClusterUserWOSplit(List<FirstActivityCluster> facList, int timeFrame, List<User> allUserUnDividedUserList) {
+        List<SleepingCluster> scList = new ArrayList<>();
         List<FirstActivityCluster> individualFacUser = new ArrayList();
         for (FirstActivityCluster facObj : facList) {
                 if (facObj.getUserCluster()[timeFrame] == 1) {
@@ -104,13 +104,13 @@ public class SleepingCluster {
         }
         User userObj = new User();
         List<User> unDividedUserList = userObj.getInitialUserForSleepingCluster(individualFacUser, allUserUnDividedUserList);
-        List SAUserList = userObj.setCategorizedTimeToUser(unDividedUserList);
-        scList = generateUserSleepingClusterWOSplit(SAUserList);
+        userObj.setCategorizedTimeToUser(unDividedUserList);
+        scList = generateUserSleepingClusterWOSplit(unDividedUserList);
         return scList;
     }
 
     public List<SleepingCluster> getIndiviudalClusterUser(List<User> allUserUnDividedUserList) {
-        List<SleepingCluster> scList = new ArrayList<SleepingCluster>();
+        List<SleepingCluster> scList = new ArrayList<>();
         User userObj = new User();
         UserDivision userDivisionObj = new UserDivision();
 
@@ -157,8 +157,10 @@ public class SleepingCluster {
             scu = new SleepingCluster();
             int[] sleepingCluster = user.getSleepingClusterVector();
             int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
+            List postList = user.getUserPost();
+            int requiredSleepingPostValue = (int) (0.08 * postList.size());
             for (int i = 0; i < sleepingCluster.length; i++) {
-                if (tempClassifiedTimeVector[i] <= 5) {
+                if (tempClassifiedTimeVector[i] <= requiredSleepingPostValue) {
                     sleepingCluster[i] = 1;
                 }
             }

@@ -38,12 +38,12 @@ import uni.cluster.IOHandler.IOReadWrite;
  */
 public class CreateClusterGraph {
 
-    Set<String> secondActivityUsers = new HashSet<String>();
+    Set<String> secondActivityUsers = new HashSet<>();
 
     public JPanel createTimegraphPanel() {
         try {
-            String folderPath = IOProperties.XML_DATA_FILE_PATH + "\\" + IOProperties.CLUSTER_FOLDER_NAME;
-            HashMap<Integer, Integer> clusterMap = new HashMap<Integer, Integer>();
+            String folderPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.CLUSTER_FOLDER_NAME;
+            HashMap<Integer, Integer> clusterMap = new HashMap<>();
             clusterMap = createClusterMap(folderPath);
             printClusterMap(clusterMap);
             JFreeChart jfreechart = createTimeChart(createClusterDataset(clusterMap));
@@ -57,7 +57,7 @@ public class CreateClusterGraph {
             ChartPanel chartpanel = new ChartPanel(jfreechart);
             chartpanel.setPreferredSize(new Dimension(600, 1200));
             return chartpanel;
-        } catch (Exception eee) {
+        } catch (IOException | SQLException eee) {
             return null;
         }
     }
@@ -81,13 +81,13 @@ public class CreateClusterGraph {
     }
 
     private HashMap<Integer, Integer> createClusterMap(String folderPath) throws FileNotFoundException, IOException {
-        HashMap<Integer, Integer> dataset = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> dataset = new HashMap<>();
         IOReadWrite ioRW = new IOReadWrite();
         List allsacFiles = new ArrayList();
         allsacFiles = ioRW.getAllFilesInADirectory(folderPath);
 
         for (int j = 0; j < allsacFiles.size(); j++) {
-            List<String> clusterUserID = new ArrayList<String>();
+            List<String> clusterUserID = new ArrayList<>();
             Integer fileName = Integer.valueOf(allsacFiles.get(j).toString());
             clusterUserID = ioRW.readClusterData(folderPath + "\\" + fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION);
             secondActivityUsers.addAll(clusterUserID);

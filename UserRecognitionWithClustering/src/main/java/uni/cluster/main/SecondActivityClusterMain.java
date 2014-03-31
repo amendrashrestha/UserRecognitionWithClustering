@@ -6,7 +6,6 @@ package uni.cluster.main;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import uni.cluster.IOHandler.IOProperties;
 import uni.cluster.IOHandler.IOReadWrite;
@@ -38,14 +37,17 @@ public class SecondActivityClusterMain {
         List file = ioReadWrite.getAllFilesInADirectory(folderPath);
 
         for (int i = 0; i < file.size(); i++) {
+            System.out.println("FileName: " + file.get(i));
             String filename = folderPath + '\\' + file.get(i);
             List<SleepingCluster> scList = ioReadWrite.readSleepingClusterData(filename + IOProperties.SLEEPING_FILE_EXTENSION);
-            List<SecondActivityCluster> scClusterSACList = new ArrayList<>();
-            String FacSc = filename.substring(filename.length() - 2);
-            for (int j = 0; j < scList.size(); j++) {
-                scClusterSACList = sacObj.getIndiviudalClusterUser(facList, scList, j, allUserUnDividedUserList);
-                processSAC(scClusterSACList, FacSc);
-            }
+            
+            List<SecondActivityCluster> scClusterSACList;
+            String FacSc = file.get(i).toString().replaceAll("[\\D]", "");
+
+//                scClusterSACList = sacObj.getIndiviudalSACUserWithSplit(facList, scList, i, allUserUnDividedUserList);
+            scClusterSACList = sacObj.getIndiviudalSACUserWOSPlit(facList, scList, i, allUserUnDividedUserList);
+
+            processSAC(scClusterSACList, FacSc);
         }
         String sacFolderPath = IOProperties.All_ACTIVITY_BASE_PATH + IOProperties.SECOND_ACTIVITY_FOLDER_NAME;
         ioReadWrite.readSecondActivityClusterData(sacFolderPath);

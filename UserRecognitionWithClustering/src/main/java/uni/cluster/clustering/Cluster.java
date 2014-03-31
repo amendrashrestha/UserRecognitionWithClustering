@@ -42,15 +42,33 @@ public class Cluster {
      * @return List<FirstActivityCluster>
      */
     public List<FirstActivityCluster> getFirstActivityCluster(List<User> userList){
-        List<FirstActivityCluster> facList = new ArrayList<FirstActivityCluster>();
+        List<FirstActivityCluster> facList = new ArrayList<>();
         FirstActivityCluster fac = new FirstActivityCluster();
         User userObj = new User();
         UserDivision userDivision  = new UserDivision();
         List dividedUserList = userDivision.divideAllUser(userList);
         dividedUserList = userObj.setCategorizedTimeToUser(dividedUserList);
-//        dividedUserList = userObj.generateUserFirstActivityCluster(dividedUserList);
-        dividedUserList = userObj.generateUserMostActiveCluster(dividedUserList);
+        dividedUserList = userObj.generateUserFirstActivityCluster(dividedUserList);
+//        dividedUserList = userObj.generateUserMostActiveCluster(dividedUserList);
         facList = fac.getUserInSameClusterForFirstActivityClusterAsFACObject(dividedUserList);
+        return facList;
+    }
+    
+    /**
+     * This function gives the users in the first activity cluster without 
+     * splitting the users into A and B
+     * @param List<USer>
+     * @return List<FirstActivityCluster>
+     */
+    public List<FirstActivityCluster> getFirstActivityClusterWOSplit(List<User> userList){
+        List<FirstActivityCluster> facList = new ArrayList<>();
+        FirstActivityCluster fac = new FirstActivityCluster();
+        User userObj = new User();
+        
+        userObj.setCategorizedTimeToUser(userList);
+        userObj.generateUserFirstActivityCluster(userList);
+//        dividedUserList = userObj.generateUserMostActiveCluster(dividedUserList);
+        facList = fac.generateUserFirstActivityCluster(userList);
         return facList;
     }
     
@@ -61,7 +79,7 @@ public class Cluster {
      * @return 
      */
     public List<SleepingCluster> getSleepingCluster(List<FirstActivityCluster> facList, List<User> userList){
-        List<SleepingCluster> scList = new ArrayList<SleepingCluster>();
+        List<SleepingCluster> scList = new ArrayList<>();
         User userObj = new User();
         SleepingCluster scObj = new SleepingCluster();
         UserDivision userDivisionObj  = new UserDivision();
@@ -80,8 +98,9 @@ public class Cluster {
      * @param List<User>
      * @return 
      */
-    public List<SecondActivityCluster> getSecondActivityCluster(List<FirstActivityCluster> facList, List<SleepingCluster> scList, List<User> userList){
-        List<SecondActivityCluster> sacList = new ArrayList<SecondActivityCluster>();
+    public List<SecondActivityCluster> getSecondActivityCluster(List<FirstActivityCluster> facList, 
+            List<SleepingCluster> scList, List<User> userList){
+        List<SecondActivityCluster> sacList = new ArrayList<>();
         User userObj = new User();
         SecondActivityCluster sacObj = new SecondActivityCluster();
         UserDivision userDivisionObj = new UserDivision();

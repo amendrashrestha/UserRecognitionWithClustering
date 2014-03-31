@@ -9,6 +9,10 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +21,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import uni.cluster.clustering.FirstActivityCluster;
 import uni.cluster.clustering.SecondActivityCluster;
 import uni.cluster.clustering.SleepingCluster;
@@ -45,6 +51,79 @@ public class IOReadWrite {
         file.createNewFile();
         try (PrintWriter out = new PrintWriter(new FileWriter(completeFileNameNPath, true))) {
             out.append(content + IOProperties.DATA_SEPERATOR);
+        }
+    }
+
+    /**
+     * This method merges the content of two files
+     *
+     * @param newUser
+     * @param existingUser
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void mergeUserPostTime(String newUser, String existingUser) throws FileNotFoundException, IOException {
+        String getUserFolderName = getFolderName(existingUser);
+        String existingUserFileLocation = IOProperties.All_YEAR_FILES_BASE_PATH + getUserFolderName;
+        String existingUserFileName = existingUser + IOProperties.USER_FILE_EXTENSION;
+        String existingUserFilePath = existingUserFileLocation + "/" + existingUserFileName;
+
+        String newUserFileLocation = IOProperties.INDIVIDUAL_USER_FILE_PATH + getUserFolderName;
+        String newUserFileName = newUser + IOProperties.USER_FILE_EXTENSION;
+        String newUserFilePath = newUserFileLocation + "/" + newUserFileName;
+
+        File existingUserFile = new File(existingUserFilePath);
+        File newUserFile = new File(newUserFilePath);
+
+        FileReader newFileReader = null;
+        FileWriter newFileWriter = null;
+
+        newFileReader = new FileReader(newUserFile);
+        newFileWriter = new FileWriter(existingUserFile, true);
+
+        int newFileContent = newFileReader.read();
+        try {
+            while (newFileContent != -1) {
+                newFileWriter.write(newFileContent);
+                newFileContent = newFileReader.read();
+            }
+        } catch (IOException e) {
+        } finally {
+            if (newFileReader != null) {
+                try {
+                    newFileReader.close();
+                } catch (IOException e) {
+                }
+            }
+            if (newFileWriter != null) {
+                try {
+                    newFileWriter.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+    /**
+     * This method copy file from one directory to another
+     * @param fileName 
+     */
+    public void copyFile(String fileName) {
+        try {
+            String getUserFolderName = getFolderName(fileName);
+            String newUserFileLocation = IOProperties.INDIVIDUAL_USER_FILE_PATH + getUserFolderName;
+            String newUserFileName = fileName + IOProperties.USER_FILE_EXTENSION;
+            String newUserFilePath = newUserFileLocation + "/" + newUserFileName;
+
+            String existingUserFileLocation = IOProperties.All_YEAR_FILES_BASE_PATH + getUserFolderName;
+            String existingUserFilePath = existingUserFileLocation + "/" + newUserFileName;
+            
+            Path original = Paths.get(newUserFilePath);
+            Path destination = Paths.get(existingUserFilePath);
+
+            Files.copy(original, destination, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            Logger.getLogger(IOReadWrite.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -133,7 +212,7 @@ public class IOReadWrite {
         return file;
     }
 
-    public List getAllDirectories(String basePath) {
+    public List<String> getAllDirectories(String basePath) {
         File file = new File(basePath);
         String[] directories = file.list(new FilenameFilter() {
             @Override
@@ -357,7 +436,7 @@ public class IOReadWrite {
                         allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);
                 /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                  allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
-                if (user.getUserPost().size() > 1) {
+                if (user.getUserPost().size() >= 60) {
                     allFiles.add(user);
                 }
             }
@@ -387,7 +466,7 @@ public class IOReadWrite {
                         allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);
                 /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                  allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
-                if (user.getUserPost().size() >= 1) {
+                if (user.getUserPost().size() >= 60) {
                     allFiles.add(user);
                 }
             }
@@ -599,23 +678,26 @@ public class IOReadWrite {
 
             for (int j = 0; j < allsacFiles.size(); j++) {
                 String fileName = allsacFiles.get(j).toString();
-                File file = new File(filePath + "\\" + folderName + "\\" + fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION);
+                String completeFilePath = filePath + "\\" + folderName + "\\" + fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
+                File file = new File(completeFilePath);
+                ioRW.removeDuplicateRowsFromFile(file);
                 BufferedReader reader = new BufferedReader(new FileReader(file));
-                int clusterName = Integer.valueOf(fileName.substring(fileName.length() - 3));
+                
+                int clusterName = Integer.valueOf(fileName.replaceAll("\\D",""));
                 String line = null;
 
                 if (file.exists()) {
                     while ((line = reader.readLine()) != null) {
                         String[] splittedContent = line.split(" ");
                         int userID = Integer.valueOf(splittedContent[0].toString());
-                        String ClusterInfo = splittedContent[1];
-                        List<Integer> clusterNumber = returnDigits(ClusterInfo);
+                        //String ClusterInfo = splittedContent[1];
+                        //List<Integer> clusterNumber = returnDigits(ClusterInfo);
 
-                        for (int k = 0; k < clusterNumber.size(); k++) {
-                            if (clusterNumber.get(k) == 1) {
+                        //for (int k = 0; k < clusterNumber.size(); k++) {
+                            //if (clusterNumber.get(k) == 1) {
                                 writeStylometricClusterData(userID, clusterName);
-                            }
-                        }
+                           // }
+                       // }
                     }
                 }
             }
@@ -671,7 +753,7 @@ public class IOReadWrite {
         File file = new File(fileName);
         List<String> dataList = new ArrayList<>();
         String line = "";
-        removeDuplicateRowsFromFile(file);
+        //removeDuplicateRowsFromFile(file);
         if (file.exists()) {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             while ((line = reader.readLine()) != null) {

@@ -778,8 +778,6 @@ public final class TimeAndStylometricMatching {
                         * (avg - (tmpval.get(i))));
             }
             stds.add(Math.sqrt(tmpX / aliases.size()));
-
-
         }
         // Do the standardization of the feature vectors
         for (int i = 0; i < nrOfFeatures; i++) {

@@ -13,8 +13,6 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import uni.cluster.IOHandler.IOReadWrite;
-import uni.cluster.clustering.Cluster;
-import uni.cluster.clustering.FirstActivityCluster;
 import uni.cluster.parser.model.User;
 import uni.post.graph.controller.CreateUserMostActiveProfileGraph;
 
@@ -27,15 +25,11 @@ public class CreateMostActiveGraphMain {
     public void init() throws FileNotFoundException, IOException {
         IOReadWrite ioReadWrite = new IOReadWrite();
         User user = new User();
-        Cluster cluster = new Cluster();
+
         HashMap<Integer, Set> clusterMap = new HashMap<>();
-
         List<User> userList = ioReadWrite.getAllUsersAsObject();
-
-        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(userList, 1000);
-       
-        List<FirstActivityCluster> facList = cluster.getFirstActivityCluster(tempUsers);
-        
+        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(userList, 2);
+              
         tempUsers = user.setCategorizedTimeToUser(tempUsers);
         clusterMap = user.generateUserCluster(tempUsers);
         createFrame(clusterMap);

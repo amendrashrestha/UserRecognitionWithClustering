@@ -99,7 +99,7 @@ public class FirstActivityCluster {
         for (User user : userList) {
             List postList = user.getUserPost();
             fac = new FirstActivityCluster();
-            int requiredPostValue = (int) (0.2 * postList.size());
+            int requiredPostValue = (int) (0.20 * postList.size());
             int[] firstActivityCluster = user.getFirstActivityVector();
             int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
             for (int i = 0; i < firstActivityCluster.length; i++) {
@@ -130,10 +130,9 @@ public class FirstActivityCluster {
 
     /**
      * @Desc This function populates the "firstActivityVector" variable of the
-     * com.post.parser.model.User class. It checks if the users post in each
-     * time frame is greater than the minimum criteria. If it meets the criteria
-     * than the value in int[] of particular time frame is set to 1 or else it
-     * is set 0. The criteria is 20% of his total messages.
+     * com.post.parser.model.User class. It checks the users maximum number of
+     * post in each time frame then set the value in int[] of particular time 
+     * frame 1 or else it is set 0. 
      * @param List<User>
      * @return List<User>
      */
@@ -141,13 +140,10 @@ public class FirstActivityCluster {
         List<FirstActivityCluster> returnList = new ArrayList();
         FirstActivityCluster fac;
         for (User user : userList) {
-            //List postList = user.getUserPost();
             fac = new FirstActivityCluster();
-            //int requiredPostValue = (int) (0.2 * postList.size());
             int[] firstActivityCluster = user.getFirstActivityVector();
             int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
 
-            // for (int i = 0; i < firstActivityCluster.length; i++) {
             int maxValue = tempClassifiedTimeVector[0];
             int tempClusterNo = 0;
             for (int j = 0; j < tempClassifiedTimeVector.length; j++) {
@@ -156,16 +152,11 @@ public class FirstActivityCluster {
                     maxValue = tempClassifiedTimeVector[j];
                     tempClusterNo = j;
                 }
-//                    if (tempClassifiedTimeVector[i] > requiredPostValue) {
-//                        firstActivityCluster[i] = 1;
-//                    }
-
             }
             firstActivityCluster[tempClusterNo] = 1;
             fac.setUserCluster(firstActivityCluster);
             fac.setUserID(user.getId());
             returnList.add(fac);
-            //  }
         }
         return returnList;
     }

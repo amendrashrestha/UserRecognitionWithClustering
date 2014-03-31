@@ -1,9 +1,5 @@
 package uni.cluster.graph.main;
 
-import uni.cluster.main.*;
-import uni.post.graph.controller.CreatePostGraph;
-import uni.cluster.IOHandler.IOReadWrite;
-import uni.cluster.parser.model.User;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,6 +20,9 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import uni.cluster.IOHandler.IOReadWrite;
+import uni.cluster.parser.model.User;
+import uni.post.graph.controller.CreatePostGraph;
 
 /**
  *
@@ -46,7 +45,7 @@ public final class PostGraphMain {
         //getting userID from text file and setting into combo box
         final JComboBox cmbUserID = new JComboBox();
         List<User> tempUserList = io.getAllUsersAsObject();
-        //List<User> userList = io.returnLimitedSortedUser(tempUserList, 15);
+        tempUserList = io.returnLimitedSortedUser(tempUserList, 2);
         for (int i = 0; i < tempUserList.size(); i++) {
             User user = tempUserList.get(i);
             cmbUserID.addItem(user.getId());

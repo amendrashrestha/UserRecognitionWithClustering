@@ -4,7 +4,6 @@
  */
 package uni.cluster.graph.main;
 
-import uni.cluster.main.*;
 import java.awt.BorderLayout;
 import java.io.FileNotFoundException;
 import java.io.IOException;

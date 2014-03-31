@@ -48,6 +48,7 @@ public class CreatePostGraph {
             FileOutputStream fos = new FileOutputStream("C:/image.PNG");
             List<String> userPostTime = getPost(clickedUser);
             //dividePost(clickedUser);
+//            JFreeChart jfreechart = createTimeChart(createTimeDataset(clickedUser, userPostTime));
             JFreeChart jfreechart = createTimeChart(createTimeDataset(clickedUser, userPostTime));
 //            JFreeChart jfreechart = createTimeChart(createTimeDataset(clickedUser));
 
@@ -100,31 +101,15 @@ public class CreatePostGraph {
         return defaultcategorydataset;
     }
 
-    private CategoryDataset createClusterDataset(int clickedUser, List postTime) throws SQLException, FileNotFoundException, IOException {
-        DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
-        HashMap<Integer, double[]> map = new HashMap<>();
-        double[] UserVector = Alias.getTimeVectorArray(postTime);
-
-        double barValue = 0.0;
-        for (int i = 0; i < UserVector.length; i++) {
-            while (i < 4) {
-                barValue = barValue + UserVector[i];
-            }
-
-        }
-
-        Iterator<Integer> kitr = map.keySet().iterator();
-        while (kitr.hasNext()) {
-            Integer k = kitr.next();
-            double[] post_count = map.get(k);
-            for (Integer i = 0; i < post_count.length; ++i) {
-                double value = (double) post_count[i];
-                defaultcategorydataset.addValue(value, k, i);
-            }
-        }
-        return defaultcategorydataset;
-    }
-
+    /**
+     * create graph for individual user
+     * @param clickedUser
+     * @param postTime
+     * @return
+     * @throws SQLException
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     private CategoryDataset createTimeDataset(int clickedUser, List<String> postTime) throws SQLException, FileNotFoundException, IOException {
         DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
         HashMap<Integer, double[]> map = new HashMap<>();
@@ -189,6 +174,15 @@ public class CreatePostGraph {
         return userPostTime;
     }
 
+    /**
+     * divides the post of user into 6 groups and creates graph of it
+     * @param clickedUser
+     * @param postTime
+     * @return
+     * @throws SQLException
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     private CategoryDataset createTimeClusterDataset(int clickedUser, List<String> postTime) throws SQLException, FileNotFoundException, IOException {
         DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
         HashMap<Integer, double[]> map = new HashMap<>();

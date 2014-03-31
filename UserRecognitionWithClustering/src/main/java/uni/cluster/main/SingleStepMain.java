@@ -4,21 +4,17 @@
  */
 package uni.cluster.main;
 
-import uni.cluster.IOHandler.IOProperties;
-import uni.cluster.IOHandler.IOReadWrite;
-import uni.cluster.clustering.Cluster;
-import uni.cluster.clustering.FirstActivityCluster;
-import uni.cluster.clustering.SleepingCluster;
-import uni.cluster.clustering.UserDivision;
-import uni.cluster.parser.model.Posts;
-import uni.cluster.parser.model.ReturnSortedUserList;
-import uni.cluster.parser.model.User;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import uni.cluster.IOHandler.IOProperties;
+import uni.cluster.IOHandler.IOReadWrite;
+import uni.cluster.clustering.Cluster;
+import uni.cluster.parser.model.ReturnSortedUserList;
+import uni.cluster.parser.model.User;
 
 /**
  *

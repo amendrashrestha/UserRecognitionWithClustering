@@ -42,7 +42,7 @@ public class CreateUserMostActiveProfileGraph {
             ChartPanel chartpanel = new ChartPanel(jfreechart);
             chartpanel.setPreferredSize(new Dimension(600, 400));
             return chartpanel;
-        } catch (Exception eee) {
+        } catch (SQLException | IOException eee) {
             return null;
         }
     }

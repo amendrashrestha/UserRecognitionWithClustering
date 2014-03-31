@@ -1,10 +1,10 @@
 package uni.cluster.clustering;
 
-import uni.cluster.IOHandler.IOReadWrite;
-import uni.cluster.parser.model.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import uni.cluster.IOHandler.IOReadWrite;
+import uni.cluster.parser.model.User;
 
 /**
  *
@@ -82,14 +82,14 @@ public class SecondActivityCluster {
         }
         return returnList;
     }
-
+  
     public List<SecondActivityCluster> generateSecondActivityCluster(List<User> userList) {
-        List<SecondActivityCluster> sacList = new ArrayList<SecondActivityCluster>();
+        List<SecondActivityCluster> sacList = new ArrayList<>();
         SecondActivityCluster sac;
         for (User user : userList) {
             sac = new SecondActivityCluster();
             List postList = user.getUserPost();
-            int requiredPostValue = (int) (0.2 * postList.size());
+            int requiredPostValue = (int) (0.20 * postList.size());
             int[] secondActivityCluster = user.getSecondActivityVector();
             int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
             for (int i = 0; i < secondActivityCluster.length; i++) {
@@ -104,14 +104,29 @@ public class SecondActivityCluster {
         return sacList;
     }
 
-    public List<SecondActivityCluster> getIndiviudalClusterUser(List<FirstActivityCluster> facList, List<SleepingCluster> scList, int scFrame, List<User> allUserUnDividedUserList) {
-        List<SecondActivityCluster> returnList = new ArrayList<>();
+    public List<SecondActivityCluster> getIndiviudalSACUserWOSPlit(List<FirstActivityCluster> facList, List<SleepingCluster> scList, int scFrame, List<User> allUserUnDividedUserList) {
+        List<SecondActivityCluster> SACUserList = new ArrayList<>();
         User userObj = new User();
         List<User> unDividedUserList = userObj.getInitialUserForSecondActivityCluster(facList, scList, allUserUnDividedUserList);
 
         unDividedUserList = userObj.setCategorizedTimeToUser(unDividedUserList);
-        returnList = generateSecondActivityCluster(unDividedUserList);
-        return returnList;
+        SACUserList = generateSecondActivityCluster(unDividedUserList);
+        return SACUserList;
+    }
+
+    public List<SecondActivityCluster> getIndiviudalSACUserWithSplit(List<FirstActivityCluster> facList, List<SleepingCluster> scList, int scFrame, List<User> allUserUnDividedUserList) {
+        List<SecondActivityCluster> SACUserList = new ArrayList<>();
+        User userObj = new User();
+        UserDivision userDivisionObj = new UserDivision();
+        SecondActivityCluster sacObj = new SecondActivityCluster();
+        
+        List<User> unDividedUserList = userObj.getInitialUserForSecondActivityCluster(facList, scList, allUserUnDividedUserList);
+        List dividedUserList = userDivisionObj.divideAllUser(unDividedUserList);
+        dividedUserList = userObj.setCategorizedTimeToUser(dividedUserList);
+        dividedUserList = userObj.generateUserSecondActivityCluster(dividedUserList);
+        SACUserList = sacObj.getUserInSameClusterForSecondActivityCluster(dividedUserList);
+
+        return SACUserList;
     }
 
     public void writeSecondActivityCluster(SecondActivityCluster sacList, String FacSc, int sacFrame) throws IOException {

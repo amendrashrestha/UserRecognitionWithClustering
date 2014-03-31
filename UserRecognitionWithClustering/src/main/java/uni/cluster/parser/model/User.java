@@ -25,7 +25,6 @@ public class User {
      * The information about the avaiable time frame can be viewed on method "timeCategoryDefinition()" 
      * defined in class "com.post.parser.clustering.FirstActivityCluster"
      */
-
     private int[] classifiedTimeVector;
     /*
      * This variable contains the boolean 0/1 values in int[] array.
@@ -233,7 +232,7 @@ public class User {
         Set<Integer> fifthClusterList = new TreeSet<>();
         Set<Integer> sixthClusterList = new TreeSet<>();
         for (User user : userList) {
-           // int[] firstActivityCluster = user.getFirstActivityVector();
+            // int[] firstActivityCluster = user.getFirstActivityVector();
             int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
             int max = 0;
             int maxIndex = 0;
@@ -274,8 +273,8 @@ public class User {
     }
 
     /**
-     * if user has posted less than or equal to 5 messages then it will be
-     * consider as his sleeping time
+     * if user has posted less than or equal to 8 percent of total message then
+     * it will be consider as his sleeping time
      *
      * @param userList
      * @return
@@ -284,8 +283,11 @@ public class User {
         for (User user : userList) {
             int[] sleepingCluster = user.getSleepingClusterVector();
             int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
+            List postList = user.getUserPost();
+            int requiredSleepingPostValue = (int) (0.08 * postList.size());
+//            int requiredSleepingPostValue = 5;
             for (int i = 0; i < sleepingCluster.length; i++) {
-                if (tempClassifiedTimeVector[i] <= 5) {
+                if (tempClassifiedTimeVector[i] <= requiredSleepingPostValue) {
                     sleepingCluster[i] = 1;
                 }
             }
@@ -297,7 +299,7 @@ public class User {
     public List<User> generateUserSecondActivityCluster(List<User> userList) {
         for (User user : userList) {
             List postList = user.getUserPost();
-            int requiredPostValue = (int) (0.2 * postList.size());
+            int requiredPostValue = (int) (0.25 * postList.size());
             int[] secondActivityCluster = user.getSecondActivityVector();
             int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
             for (int i = 0; i < secondActivityCluster.length; i++) {
@@ -333,7 +335,8 @@ public class User {
      * @param allUserList
      * @return
      */
-    public List<User> getInitialUserForSecondActivityCluster(List<FirstActivityCluster> facList, List<SleepingCluster> scList, List<User> allUserList) {
+    public List<User> getInitialUserForSecondActivityCluster(List<FirstActivityCluster> facList,
+            List<SleepingCluster> scList, List<User> allUserList) {
         List<User> returnUserList = new ArrayList<>();
         for (SleepingCluster sc : scList) {
             for (User user : allUserList) {
@@ -346,11 +349,11 @@ public class User {
 
         ClusterCommons cc = new ClusterCommons();
         for (User user : returnUserList) {
+            List<Posts> postList = user.getUserPost();
             System.out.println("Before Deleting " + user.getId() + "-->" + user.getUserPost().size());
             for (FirstActivityCluster facObj : facList) {
                 if (facObj.getUserID() == user.getId()) {
                     int[] facTimeVector = facObj.getUserCluster();
-                    List<Posts> postList = user.getUserPost();
                     List<Posts> toSetList = new ArrayList<>();
                     for (Posts post : postList) {
                         Timestamp ts = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd ").format(new Date()).concat(post.getTime()));
@@ -361,10 +364,10 @@ public class User {
                     }
                     user.setUserPost(toSetList);
                     System.out.println("After Deleting " + user.getId() + "-->" + user.getUserPost().size());
+                    System.out.println("---------------");
                     break;
                 }
             }
-
         }
         return returnUserList;
     }

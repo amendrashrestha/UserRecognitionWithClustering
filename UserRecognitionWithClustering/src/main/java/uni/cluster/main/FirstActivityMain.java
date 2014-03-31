@@ -13,7 +13,8 @@ import uni.cluster.clustering.UserDivision;
 import uni.cluster.parser.model.User;
 
 /**
- *
+ * This class creates First Activity Cluster of users either by splitting them
+ * or without splitting.
  * @author ITE
  */
 public class FirstActivityMain {
@@ -26,12 +27,12 @@ public class FirstActivityMain {
         List<User> unDividedUserList = ioReadWrite.getAllUsersAsObject();
 
         //For passing limited number of sorted users  
-        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(unDividedUserList, 3);
+        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(unDividedUserList, 400);
 
         /**
          * First Activity Cluster by splitting users
          */
-        UserDivision userDivision = new UserDivision();
+       /*UserDivision userDivision = new UserDivision();
         List dividedUserList = userDivision.divideAllUser(tempUsers);
         user.setCategorizedTimeToUser(dividedUserList);
         user.generateUserFirstActivityCluster(dividedUserList);
@@ -41,14 +42,13 @@ public class FirstActivityMain {
         
         /*********************************************************************************
         /**
-         * First Activity Cluster without splitting users
+         * First Activity Cluster without spliting users
          */
-       /* List users = user.setCategorizedTimeToUser(tempUsers);
-        List facUsers = fac.generateUserFirstActivityClusterMaxPost(users);
-        // This function writes the firstActivityCluster into file
+        List users = user.setCategorizedTimeToUser(tempUsers);
+        List facUsers = fac.generateUserFirstActivityCluster(users);
         fac.writeFirstActivityCluster(facUsers);
 
-        *************************************************************************************
+       // *************************************************************************************
         /*
          for (int i = 0; i < facList.size(); i++) {
          fac = (FirstActivityCluster) facList.get(i);
