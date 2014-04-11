@@ -37,8 +37,8 @@ public class SleepingClusterMain {
 
         for (int i = 0; i < FACSize; i++) {
             allscList = new ArrayList<>();
-//            allscList = scObj.getIndiviudalSleepingClusterUserWithSplit(facList, i, allUserUnDividedUserList);
-            allscList = scObj.getIndiviudalSleepingClusterUserWOSplit(facList, i, allUserUnDividedUserList);
+            allscList = scObj.getIndiviudalSleepingClusterUserWithSplit(facList, i, allUserUnDividedUserList);
+//            allscList = scObj.getIndiviudalSleepingClusterUserWOSplit(facList, i, allUserUnDividedUserList);
             processSCUsers(allscList, (i + 1));
         }
         System.out.println("The total number of distinct sleeping users is: " + uniqueSleepingUsersList.size());
@@ -48,9 +48,7 @@ public class SleepingClusterMain {
         SleepingCluster scObj = new SleepingCluster();
         System.out.println("The number of the user in " + FACcluster + "th Sleeping Cluster is:  " + allscList.size());
 
-        for (int i = 0; i < allscList.size(); i++) {
-            SleepingCluster scList = allscList.get(i);
-
+        for (SleepingCluster scList : allscList) {
             System.out.println("The id of the user is:  " + scList.getUserID());
             int[] timeVec = scList.getSleepingCluster();
             for (int j = 0; j < timeVec.length; j++) {

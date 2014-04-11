@@ -19,7 +19,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uni.cluster.main.AnalyzingUsersMain</mainClass>
+                            <mainClass>uni.cluster.main.FileCreaterMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -29,7 +29,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uni.cluster.main.AnalyzingUsersMain</mainClass>
+                            <mainClass>uni.cluster.main.FileCreaterMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

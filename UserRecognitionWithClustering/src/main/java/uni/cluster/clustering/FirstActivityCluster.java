@@ -85,6 +85,7 @@ public class FirstActivityCluster {
     }
 
     /**
+     * @param userList
      * @Desc This function populates the "firstActivityVector" variable of the
      * com.post.parser.model.User class. It checks if the users post in each
      * time frame is greater than the minimum criteria. If it meets the criteria
@@ -121,7 +122,7 @@ public class FirstActivityCluster {
 
     public List<FirstActivityCluster> readFirstActivityCluster() throws FileNotFoundException, IOException {
         IOReadWrite ioRW = new IOReadWrite();
-        String fileName = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.FIRST_ACTIVITY_FOLDER_NAME + "\\"
+        String fileName = IOProperties.All_ACTIVITY_BASE_PATH + "/" + IOProperties.FIRST_ACTIVITY_FOLDER_NAME + "/"
                 + IOProperties.FIRST_ACTIVITY_FILE_NAME + IOProperties.FIRST_ACTIVITY_FILE_EXTENSION;
         List<FirstActivityCluster> firstActivityCluster = ioRW.readFirstActivityClusterData(fileName);
 

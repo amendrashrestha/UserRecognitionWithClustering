@@ -167,7 +167,7 @@ public class IOReadWrite {
     }
 
     public void CreateDirectory(String path, String folderName) {
-        File directory = new File(path + "\\" + folderName); //for mac use / and for windows use "\\"
+        File directory = new File(path + "/" + folderName); //for mac use / and for windows use "\\"
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -177,7 +177,7 @@ public class IOReadWrite {
      * Delete directory if it exists and will create new
      */
     public void checkAndCreateDirectory(String path, String folderName) {
-        File directory = new File(path + "\\" + folderName); //for mac use / and for windows use "\\"
+        File directory = new File(path + "/" + folderName); //for mac use / and for windows use "\\"
         if (directory.exists()) {
             deleteDir(directory);
         }
@@ -241,7 +241,7 @@ public class IOReadWrite {
         } catch (IOException ex) {
             throw ex;
         }
-        String a = stringBuilder.substring(0, (stringBuilder.length() - (IOProperties.DATA_SEPERATOR).length())).toString();
+        String a = stringBuilder.substring(0, (stringBuilder.length() - (IOProperties.DATA_SEPERATOR).length()));
         return a;
     }
 
@@ -262,7 +262,7 @@ public class IOReadWrite {
         } catch (IOException ex) {
             throw ex;
         }
-        String a = stringBuilder.substring(0, (stringBuilder.length() - (IOProperties.DATA_SEPERATOR).length())).toString();
+        String a = stringBuilder.substring(0, (stringBuilder.length() - (IOProperties.DATA_SEPERATOR).length()));
         return a;
     }
 
@@ -288,7 +288,7 @@ public class IOReadWrite {
      }*/
     public User convertTxtFileToUserObj(String basePath, String directoryName, String fileName, String extension) throws FileNotFoundException, IOException {
         String userPostAsString = readTxtFileAsString(basePath, directoryName, fileName, extension);
-        String temp[] = null;
+        String temp[];
         User user = new User();
         List postList = new ArrayList();
         user.setId(Integer.valueOf(fileName));
@@ -300,15 +300,17 @@ public class IOReadWrite {
 
         }
         for (int i = 0; i < temp.length; i++) {
-            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
-                    || temp[i].toString().length() == 8) {
-                temp[i] = temp[i].toString() + "  ";
+            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].length() == 8) {
+                temp[i] = temp[i] + "  ";
             }
             Posts posts = new Posts();
-            String date = temp[i].substring(0, 8);
-            if (date.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
-                posts.setTime(date);
-                posts.setContent(temp[i].substring(9, temp[i].length()));
+            String time = temp[i].substring(0, 8);
+            String date = temp[i].substring(9, 19);
+            if (time.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                posts.setTime(time);
+                posts.setDate(date);
+//                posts.setContent(temp[i].substring(20, temp[i].length()));
                 postList.add(posts);
                 //System.out.println(date);
             } else {
@@ -333,9 +335,9 @@ public class IOReadWrite {
 
         }
         for (int i = 0; i < temp.length; i++) {
-            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
-                    || temp[i].toString().length() == 8) {
-                temp[i] = temp[i].toString() + "  ";
+            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].length() == 8) {
+                temp[i] = temp[i] + "  ";
             }
             Posts posts = new Posts();
             String date = temp[i].substring(0, 8);
@@ -376,9 +378,9 @@ public class IOReadWrite {
 
         }
         for (int i = 0; i < temp.length; i++) {
-            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
-                    || temp[i].toString().length() == 8) {
-                temp[i] = temp[i].toString() + "  ";
+            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].length() == 8) {
+                temp[i] = temp[i] + "  ";
             }
             Posts posts = new Posts();
             String date = temp[i].substring(0, 8);
@@ -402,8 +404,8 @@ public class IOReadWrite {
         List returnList = new ArrayList();
         File folder = new File(directoryName);
         File[] listOfFiles = folder.listFiles();
-        for (int i = 0; i < listOfFiles.length; i++) {
-            String a = listOfFiles[i].getName();
+        for (File listOfFile : listOfFiles) {
+            String a = listOfFile.getName();
             returnList.add(a.substring(0, a.length() - 4));
         }
         return returnList;
@@ -428,17 +430,26 @@ public class IOReadWrite {
         List directoryList = ioRW.getAllDirectories(IOProperties.INDIVIDUAL_USER_FILE_PATH);
         List allFiles = new ArrayList();
         List allFilesSize = new ArrayList();
-        for (int i = 0; i < directoryList.size(); i++) {
-            allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList.get(i));
-//        allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH);
-            for (int j = 0; j < allFilesSize.size(); j++) {
-                User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, directoryList.get(i).toString(),
-                        allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);
+        for (Object directoryList1 : directoryList) {
+            System.out.println(directoryList1);
+            allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList1);
+
+            for (Object allFilesSize1 : allFilesSize) {
+                if(allFilesSize1.toString().contains(".DS_S")){
+                    String dsFilePath = IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList1 + "/" + allFilesSize1.toString();
+                    File dsFile = new File(dsFilePath);
+                    dsFile.delete();
+                }
+                else{
+                    User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, 
+                            directoryList1.toString(), allFilesSize1.toString(), IOProperties.USER_FILE_EXTENSION);
                 /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
-                 allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
-                if (user.getUserPost().size() >= 60) {
+                allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
+                if (user.getUserPost().size() >= 10) {
                     allFiles.add(user);
                 }
+                }
+                
             }
         }
         return allFiles;
@@ -448,6 +459,7 @@ public class IOReadWrite {
      * Return users as an object and returns only those users who has posted
      * more than 60 messages in discussion board
      *
+     * @param path
      * @return
      * @throws FileNotFoundException
      * @throws IOException
@@ -480,11 +492,10 @@ public class IOReadWrite {
         List allFilesSize = new ArrayList();
         User user = new User();
         String tempUserID = String.valueOf(userID);
-        for (int i = 0; i < directoryList.size(); i++) {
-            allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList.get(i));
-            for (int j = 0; j < allFilesSize.size(); j++) {
-                user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, directoryList.get(i).toString(),
-                        tempUserID, IOProperties.USER_FILE_EXTENSION);
+        for (Object directoryList1 : directoryList) {
+            allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList1);
+            for (Object allFilesSize1 : allFilesSize) {
+                user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, directoryList1.toString(), tempUserID, IOProperties.USER_FILE_EXTENSION);
             }
         }
         return user;
@@ -495,13 +506,13 @@ public class IOReadWrite {
         FirstActivityCluster fac;
         File file = new File(fileName);
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line = null;
+        String line;
         if (file.exists()) {
             while ((line = reader.readLine()) != null) {
                 fac = new FirstActivityCluster();
                 String[] splittedContent = line.split(" ");
-                fac.setUserID(Integer.valueOf(splittedContent[0].toString()));
-                String splittedTimeVector = splittedContent[1].toString();
+                fac.setUserID(Integer.valueOf(splittedContent[0]));
+                String splittedTimeVector = splittedContent[1];
                 int timeVector[] = fac.getUserCluster();
 
                 for (int i = 0; i < 6; i++) {
@@ -518,9 +529,10 @@ public class IOReadWrite {
 
     public void writeFirstActivityClusterData(List<FirstActivityCluster> firstActivityCluster) throws IOException {
         CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.FIRST_ACTIVITY_FOLDER_NAME);
-        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.FIRST_ACTIVITY_FOLDER_NAME
-                + "\\" + IOProperties.FIRST_ACTIVITY_FILE_NAME + IOProperties.FIRST_ACTIVITY_FILE_EXTENSION;
+        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH +IOProperties.FIRST_ACTIVITY_FOLDER_NAME
+                + "/" + IOProperties.FIRST_ACTIVITY_FILE_NAME + IOProperties.FIRST_ACTIVITY_FILE_EXTENSION;
 
+        System.out.println(completeFileNameNPath);
         File file = checkAndCreateFile(completeFileNameNPath);
         int[] timeVector;
         try (BufferedWriter output = new BufferedWriter(new FileWriter(file, true))) {
@@ -538,8 +550,8 @@ public class IOReadWrite {
     }
 
     public void writeSleepingClusterData(List<SleepingCluster> sleepingCluster, String cluster) throws IOException {
-        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SLEEPING_FOLDER_NAME
-                + "\\" + IOProperties.SLEEPING_FILE_NAME + cluster + IOProperties.SLEEPING_FILE_EXTENSION;
+        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "/" + IOProperties.SLEEPING_FOLDER_NAME
+                + "/" + IOProperties.SLEEPING_FILE_NAME + cluster + IOProperties.SLEEPING_FILE_EXTENSION;
         File file = checkAndCreateFile(completeFileNameNPath);
         int[] timeVector;
         try (BufferedWriter output = new BufferedWriter(new FileWriter(file, true))) {
@@ -557,8 +569,8 @@ public class IOReadWrite {
     }
 
     public void writeSingleSleepingClusterData(SleepingCluster sleepingCluster, int FACcluster, int UserSC) throws IOException {
-        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SLEEPING_FOLDER_NAME
-                + "\\" + IOProperties.SLEEPING_FILE_NAME + FACcluster + UserSC + IOProperties.SLEEPING_FILE_EXTENSION;
+        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "/" + IOProperties.SLEEPING_FOLDER_NAME
+                + "/" + IOProperties.SLEEPING_FILE_NAME + FACcluster + UserSC + IOProperties.SLEEPING_FILE_EXTENSION;
         File file = checkAndCreateFile(completeFileNameNPath);
         int[] timeVector;
         try (BufferedWriter output = new BufferedWriter(new FileWriter(file, true))) {
@@ -583,8 +595,8 @@ public class IOReadWrite {
             while ((line = reader.readLine()) != null) {
                 scObj = new SleepingCluster();
                 String[] splittedContent = line.split(" ");
-                scObj.setUserID(Integer.valueOf(splittedContent[0].toString()));
-                String splittedTimeVector = splittedContent[1].toString();
+                scObj.setUserID(Integer.valueOf(splittedContent[0]));
+                String splittedTimeVector = splittedContent[1];
                 int timeVector[] = scObj.getSleepingCluster();
 
                 for (int i = 0; i < 6; i++) {
@@ -601,10 +613,10 @@ public class IOReadWrite {
 
     public void writeSecondActivityClusterData(SecondActivityCluster secondActivityCluster, String FacSc, int folderName) throws IOException {
         CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.SECOND_ACTIVITY_FOLDER_NAME);
-        CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SECOND_ACTIVITY_FOLDER_NAME, String.valueOf(folderName));
+        CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH + "/" + IOProperties.SECOND_ACTIVITY_FOLDER_NAME, String.valueOf(folderName));
 
-        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SECOND_ACTIVITY_FOLDER_NAME + "\\" + String.valueOf(folderName)
-                + "\\" + IOProperties.SECOND_ACTIVITY_FILE_NAME + FacSc + String.valueOf(folderName) + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
+        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + "/" + IOProperties.SECOND_ACTIVITY_FOLDER_NAME + "/" + String.valueOf(folderName)
+                + "/" + IOProperties.SECOND_ACTIVITY_FILE_NAME + FacSc + String.valueOf(folderName) + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
         File file = checkAndCreateFile(completeFileNameNPath);
         int[] timeVector;
         try (BufferedWriter output = new BufferedWriter(new FileWriter(file, true))) {
@@ -637,17 +649,17 @@ public class IOReadWrite {
 
         for (int i = 0; i < sacFolders.size(); i++) {
             String folderName = sacFolders.get(i).toString();
-            allsacFiles = ioRW.getAllFilesInADirectory(filePath + "\\" + folderName);
+            allsacFiles = ioRW.getAllFilesInADirectory(filePath + "/" + folderName);
             for (int j = 0; j < allsacFiles.size(); j++) {
                 String fileName = allsacFiles.get(j).toString();
-                File file = new File(filePath + "\\" + folderName + "\\" + fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION);
+                File file = new File(filePath + "/" + folderName + "/" + fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION);
                 BufferedReader reader = new BufferedReader(new FileReader(file));
 
                 String line = null;
                 if (file.exists()) {
                     while ((line = reader.readLine()) != null) {
                         String[] splittedContent = line.split(" ");
-                        Integer user = Integer.valueOf(splittedContent[0].toString());
+                        Integer user = Integer.valueOf(splittedContent[0]);
                         allUsers.add(user);
                     }
                 }
@@ -674,11 +686,11 @@ public class IOReadWrite {
 
         for (int i = 0; i < sacFolders.size(); i++) {
             String folderName = sacFolders.get(i).toString();
-            allsacFiles = ioRW.getAllFilesInADirectory(filePath + "\\" + folderName);
+            allsacFiles = ioRW.getAllFilesInADirectory(filePath + "/" + folderName);
 
             for (int j = 0; j < allsacFiles.size(); j++) {
                 String fileName = allsacFiles.get(j).toString();
-                String completeFilePath = filePath + "\\" + folderName + "\\" + fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
+                String completeFilePath = filePath + "/" + folderName + "/" + fileName + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
                 File file = new File(completeFilePath);
                 ioRW.removeDuplicateRowsFromFile(file);
                 BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -689,7 +701,7 @@ public class IOReadWrite {
                 if (file.exists()) {
                     while ((line = reader.readLine()) != null) {
                         String[] splittedContent = line.split(" ");
-                        int userID = Integer.valueOf(splittedContent[0].toString());
+                        int userID = Integer.valueOf(splittedContent[0]);
                         //String ClusterInfo = splittedContent[1];
                         //List<Integer> clusterNumber = returnDigits(ClusterInfo);
 
@@ -731,7 +743,7 @@ public class IOReadWrite {
     public void writeStylometricClusterData(int User, int fileName) throws IOException {
         CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.CLUSTER_FOLDER_NAME);
         String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + String.valueOf(IOProperties.CLUSTER_FOLDER_NAME)
-                + "\\" + String.valueOf(fileName)
+                + "/" + String.valueOf(fileName)
                 + IOProperties.SECOND_ACTIVITY_FILE_EXTENSION;
         File file = CreateFile(completeFileNameNPath);
         try (BufferedWriter output = new BufferedWriter(new FileWriter(file, true))) {
@@ -843,9 +855,9 @@ public class IOReadWrite {
         }
 
         for (int i = 0; i < temp.length; i++) {
-            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
-                    || temp[i].toString().length() == 8) {
-                temp[i] = temp[i].toString() + "  ";
+            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].length() == 8) {
+                temp[i] = temp[i] + "  ";
             }
             String date = temp[i].substring(0, 8);
             String content = "";
@@ -895,9 +907,9 @@ public class IOReadWrite {
         }
 
         for (int i = 0; i < temp.length; i++) {
-            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
-                    || temp[i].toString().length() == 8) {
-                temp[i] = temp[i].toString() + "  ";
+            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].length() == 8) {
+                temp[i] = temp[i] + "  ";
             }
             String date = temp[i].substring(0, 8);
             String content = "";

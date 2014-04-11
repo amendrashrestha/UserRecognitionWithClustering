@@ -1,8 +1,10 @@
 package uni.cluster.parser.model;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +29,24 @@ public class User {
      */
     private int[] classifiedTimeVector;
     /*
+     * This variable contains the total number of posts, posted in an individual day,
+     * The information about the avaiable day frame can be viewed on method "timeCategoryDefinition()" 
+     * defined in class "com.post.parser.clustering.FirstActivityCluster"
+     */
+    private int[] classifiedDayVector;
+    /*
+     * This variable contains the total number of posts, posted in an individual month,
+     * The information about the avaiable day frame can be viewed on method "timeCategoryDefinition()" 
+     * defined in class "com.post.parser.clustering.FirstActivityCluster"
+     */
+    private int[] classifiedMonthVector;
+    /*
+     * This variable contains the total number of posts, posted in an individual month,
+     * The information about the avaiable day frame can be viewed on method "timeCategoryDefinition()" 
+     * defined in class "com.post.parser.clustering.FirstActivityCluster"
+     */
+    private int[] classifiedDayOfMonthVector;
+    /*
      * This variable contains the boolean 0/1 values in int[] array.
      * If the particular time frame has more posts than 20% of the total post posted by the user the value is updated as 1.
      * The information about the avaiable time frame can be viewed on method "timeCategoryDefinition()" 
@@ -46,11 +66,13 @@ public class User {
     private int[] secondActivityVector;
 
     /**
-     * @return the userPost
      */
     public User() {
         this.type = UserType.UNDEFINED;
         this.classifiedTimeVector = new int[]{0, 0, 0, 0, 0, 0};
+        this.classifiedDayVector = new int[]{0, 0, 0, 0, 0, 0, 0};
+        this.classifiedMonthVector = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        this.classifiedDayOfMonthVector = new int[31];
         this.firstActivityVector = new int[]{0, 0, 0, 0, 0, 0};
         this.sleepingClusterVector = new int[]{0, 0, 0, 0, 0, 0};
         this.secondActivityVector = new int[]{0, 0, 0, 0, 0, 0};
@@ -108,6 +130,49 @@ public class User {
     public void setClassifiedTimeVector(int[] classifiedTimeVector) {
         this.classifiedTimeVector = classifiedTimeVector;
     }
+    
+    
+    /**
+     * @return the classifiedDayVector
+     */
+    public int[] getClassifiedDayVector() {
+        return classifiedDayVector;
+    }
+
+    /**
+     * @param classifiedDayVector the classifiedDayVector to set
+     */
+    public void setClassifiedDayVector(int[] classifiedDayVector) {
+        this.classifiedDayVector = classifiedDayVector;
+    }
+    
+        /**
+     * @return the classifiedMonthVector
+     */
+    public int[] getClassifiedMonthVector() {
+        return classifiedMonthVector;
+    }
+
+    /**
+     * @param classifiedMonthVector the classifiedMonthVector to set
+     */
+    public void setClassifiedMonthVector(int[] classifiedMonthVector) {
+        this.classifiedMonthVector = classifiedMonthVector;
+    }
+    
+        /**
+     * @return the classifiedDayOfMonthVector
+     */
+    public int[] getClassifiedDayOfMonthVector() {
+        return classifiedDayOfMonthVector;
+    }
+
+    /**
+     * @param classifiedDayOfMonthVector the classifiedDayOfMonthVector to set
+     */
+    public void setClassifiedDayOfMonthVector(int[] classifiedDayOfMonthVector) {
+        this.classifiedDayOfMonthVector = classifiedDayOfMonthVector;
+    }
 
     /**
      * @return the firstActivityVector
@@ -152,11 +217,11 @@ public class User {
     }
 
     /**
+     * @param userList
      * @Desc This function populates the "classifiedTimeVector" variable of the
      * com.post.parser.model.User class. It gives the total number of posts in
      * the specified time range which has been described in getTimeCategory(int
      * hours) in this class.
-     * @param List<User>
      * @return List<User>
      */
     public List<User> setCategorizedTimeToUser(List<User> userList) {
@@ -174,8 +239,78 @@ public class User {
         }
         return userList;
     }
+    
+    /**
+     * @param userList
+     * @return 
+     * @throws java.text.ParseException
+     * @Desc This function populates the "classifiedDayVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified day range which has been described in getDayCategory(int
+     * DayOfWeek) in this class.
+     */
+    public List<User> setCategorizedDayToUser(List<User> userList) throws ParseException{
+        for(User user : userList){
+            int[] userDayVector = user.getClassifiedDayVector();
+            for(Posts posts : user.getUserPost()){
+                String date = posts.getDate();
+                int DayOfWeek = getDayOfWeek(date) - 1;
+//                System.out.println("Day Of Week " + DayOfWeek);
+                userDayVector[DayOfWeek] = userDayVector[DayOfWeek] + 1;
+            }
+            user.setClassifiedDayVector(userDayVector);
+        }        
+        return userList;
+    }
+    
+    /**
+     * @param userList
+     * @return 
+     * @throws java.text.ParseException
+     * @Desc This function populates the "classifiedDayVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified day range which has been described in getDayCategory(int
+     * DayOfWeek) in this class.
+     */
+    public List<User> setCategorizedMonthToUser(List<User> userList) throws ParseException{
+        for(User user : userList){
+            int[] userMonthVector = user.getClassifiedMonthVector();
+            for(Posts posts : user.getUserPost()){
+                String date = posts.getDate();
+                int MonthOfYear = getMonthOfYear(date);
+//                System.out.println("Day Of Week " + DayOfWeek);
+                userMonthVector[MonthOfYear] = userMonthVector[MonthOfYear] + 1;
+            }
+            user.setClassifiedMonthVector(userMonthVector);
+        }        
+        return userList;
+    }
+    
+    /**
+     * @param userList
+     * @return 
+     * @throws java.text.ParseException
+     * @Desc This function populates the "classifiedDayVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified day range which has been described in getDayCategory(int
+     * DayOfWeek) in this class.
+     */
+    public List<User> setCategorizedDayOfMonthToUser(List<User> userList) throws ParseException{
+        for(User user : userList){
+            int[] userDayOfMonthVector = user.getClassifiedDayOfMonthVector();
+            for(Posts posts : user.getUserPost()){
+                String date = posts.getDate();
+                int DayOfMonth = getDayOfMonth(date) - 1;
+                System.out.println("Day Of Week " + DayOfMonth);
+                userDayOfMonthVector[DayOfMonth] = userDayOfMonthVector[DayOfMonth] + 1;
+            }
+            user.setClassifiedDayOfMonthVector(userDayOfMonthVector);
+        }        
+        return userList;
+    }
 
     /**
+     * @param userList
      * @Desc This function populates the "firstActivityVector" variable of the
      * com.post.parser.model.User class. It checks if the users post in each
      * time frame is greater than the minimum criteria. If it meets the criteria
@@ -299,7 +434,7 @@ public class User {
     public List<User> generateUserSecondActivityCluster(List<User> userList) {
         for (User user : userList) {
             List postList = user.getUserPost();
-            int requiredPostValue = (int) (0.25 * postList.size());
+            int requiredPostValue = (int) (0.20 * postList.size());
             int[] secondActivityCluster = user.getSecondActivityVector();
             int[] tempClassifiedTimeVector = user.getClassifiedTimeVector();
             for (int i = 0; i < secondActivityCluster.length; i++) {
@@ -370,5 +505,32 @@ public class User {
             }
         }
         return returnUserList;
+    }
+
+    private int getDayOfWeek(String date) throws ParseException {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-mm-dd");
+        Date dt1 = format1.parse(date);
+        c.setTime(dt1);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        return dayOfWeek;
+    }
+
+    private int getMonthOfYear(String date) throws ParseException {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        Date dt1 = format1.parse(date);   
+        c.setTime(dt1);
+        int monthOfYear = c.get(Calendar.MONTH);
+        return monthOfYear;
+    }
+
+    private int getDayOfMonth(String date) throws ParseException {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        Date dt1 = format1.parse(date);   
+        c.setTime(dt1);
+        int monthOfYear = c.get(Calendar.DAY_OF_MONTH);
+        return monthOfYear;
     }
 }

@@ -27,19 +27,18 @@ public class CopyFileContent {
         Collections.sort(combinedUserDirectory, new ComparatorImpl());
         
         for (int i = 0; i < newUserDirectory.size(); i++) {
-            List newUsers = io.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + "\\" + newUserDirectory.get(i).toString());
-            List combinedUsers = io.getAllFilesInADirectory(IOProperties.All_YEAR_FILES_BASE_PATH + "\\" + combinedUserDirectory.get(i).toString());
+            List newUsers = io.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + "/" + newUserDirectory.get(i).toString());
+            List combinedUsers = io.getAllFilesInADirectory(IOProperties.All_YEAR_FILES_BASE_PATH + "/" + combinedUserDirectory.get(i).toString());
             System.out.println("NU:" + newUsers);
             System.out.println("OU:" + combinedUsers);
 
-            for (int j = 0; j < newUsers.size(); j++) {
-                String newUser = newUsers.get(j).toString();
+            for (Object newUser1 : newUsers) {
+                String newUser = newUser1.toString();
                 System.out.println("J User: " + newUser + "**");
-                for (int k = 0; k < combinedUsers.size(); k++) {
-                    // add users content if it exists                    
-                    String oldUser = combinedUsers.get(k).toString();
+                for (Object combinedUser : combinedUsers) {
+                    // add users content if it exists
+                    String oldUser = combinedUser.toString();
                     System.out.println("K User: " + oldUser);
-
                     if (newUser.equals(oldUser)) {
                         io.mergeUserPostTime(newUser, oldUser);
                         System.out.println("Matched Users :" + oldUser);
@@ -64,7 +63,6 @@ public class CopyFileContent {
     /**
      * Sort the list of strings
      *
-     * @param info
      */
     public static class ComparatorImpl implements Comparator<String> {
 

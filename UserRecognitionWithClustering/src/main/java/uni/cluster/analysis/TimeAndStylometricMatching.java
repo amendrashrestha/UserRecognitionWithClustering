@@ -2,6 +2,7 @@ package uni.cluster.analysis;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.BreakIterator;
 import java.util.ArrayList;
@@ -94,6 +95,7 @@ public final class TimeAndStylometricMatching {
 
     /**
      * Load the list of function words from file
+     * @param path
      */
     public void loadFunctionWords(String path) {
         functionWords = new ArrayList<>();
@@ -106,7 +108,7 @@ public final class TimeAndStylometricMatching {
                 functionWords.add(strLine);
             }
             br.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
         }
     }
 
@@ -119,11 +121,11 @@ public final class TimeAndStylometricMatching {
      */
     public ArrayList<Float> countFunctionWords(List<String> words) {
         ArrayList<Float> tmpCounter = new ArrayList<>(Collections.nCopies(functionWords.size(), 0.0f));	// Initialize to zero
-        for (int i = 0; i < words.size(); i++) {
-            String word = words.get(i).toLowerCase();
+        for (String word1 : words) {
+            String word = word1.toLowerCase();
             if (functionWords.contains(word)) {
                 int place = functionWords.indexOf(word);
-                float value = (Float) tmpCounter.get(place);
+                float value = tmpCounter.get(place);
                 value++;
                 tmpCounter.set(place, value);
             }
@@ -196,7 +198,7 @@ public final class TimeAndStylometricMatching {
             wordLength = word.length();
             // We only care about wordLengths in the interval 1-20
             if (wordLength > 0 && wordLength <= 20) {
-                float value = (Float) tmpCounter.get(wordLength - 1);	// Observe that we use wordLength-1 as index!
+                float value = tmpCounter.get(wordLength - 1);	// Observe that we use wordLength-1 as index!
                 value++;
                 tmpCounter.set(wordLength - 1, value);
             }
@@ -503,7 +505,7 @@ public final class TimeAndStylometricMatching {
             fusionValue = (foundStylo + foundTime) / 2;
             secondList.add(fusionValue);
         }
-        sortListWithFusionValue(sortedStyloList);
+        sortListWithFusionValue(sortedTimeList);
     }
 
     /**
@@ -537,6 +539,7 @@ public final class TimeAndStylometricMatching {
 
     /**
      * find similar user within the list
+     * @param tempdisplayInfo
      */
     public void createRank(List tempdisplayInfo) {
         int infoSize = tempdisplayInfo.size();
@@ -623,7 +626,8 @@ public final class TimeAndStylometricMatching {
      * Sort the data according to highest match between 2 users and passing the
      * sorted data to table model
      *
-     * @param info
+     * @param Styloinfo
+     * @return 
      */
     public List getsortedStylo(List Styloinfo) {
         List tempStyloinfo = new ArrayList();

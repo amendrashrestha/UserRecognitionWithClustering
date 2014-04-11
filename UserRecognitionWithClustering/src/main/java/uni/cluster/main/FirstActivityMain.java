@@ -6,6 +6,8 @@ package uni.cluster.main;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 import uni.cluster.IOHandler.IOReadWrite;
 import uni.cluster.clustering.FirstActivityCluster;
@@ -19,7 +21,7 @@ import uni.cluster.parser.model.User;
  */
 public class FirstActivityMain {
 
-    public static void main(String[] args) throws FileNotFoundException, IOException {
+    public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {
 
         IOReadWrite ioReadWrite = new IOReadWrite();
         User user = new User();
@@ -27,7 +29,7 @@ public class FirstActivityMain {
         List<User> unDividedUserList = ioReadWrite.getAllUsersAsObject();
 
         //For passing limited number of sorted users  
-        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(unDividedUserList, 400);
+        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(unDividedUserList, 1);
 
         /**
          * First Activity Cluster by splitting users
@@ -35,6 +37,7 @@ public class FirstActivityMain {
        /*UserDivision userDivision = new UserDivision();
         List dividedUserList = userDivision.divideAllUser(tempUsers);
         user.setCategorizedTimeToUser(dividedUserList);
+        user.setCategorizedDayToUser(dividedUserList);
         user.generateUserFirstActivityCluster(dividedUserList);
         List facUsers = fac.getUserInSameClusterForFirstActivityClusterAsFACObject(dividedUserList);
         fac.writeFirstActivityCluster(facUsers);
@@ -44,7 +47,13 @@ public class FirstActivityMain {
         /**
          * First Activity Cluster without spliting users
          */
-        List users = user.setCategorizedTimeToUser(tempUsers);
+        List<User> users = user.setCategorizedTimeToUser(tempUsers);
+        //users = user.setCategorizedDayToUser(tempUsers);
+        //users = user.setCategorizedMonthToUser(tempUsers);
+        users = user.setCategorizedDayOfMonthToUser(tempUsers);
+        System.out.println("User posts Week " + Arrays.toString(users.get(0).getClassifiedDayVector()));
+        System.out.println("User posts Month " + Arrays.toString(users.get(0).getClassifiedMonthVector()));
+        System.out.println("User posts Day Of Month " + Arrays.toString(users.get(0).getClassifiedDayOfMonthVector()));
         List facUsers = fac.generateUserFirstActivityCluster(users);
         fac.writeFirstActivityCluster(facUsers);
 

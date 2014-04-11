@@ -1,25 +1,25 @@
 package uni.cluster.main;
 
-import uni.cluster.IOHandler.IOReadWrite;
-import uni.cluster.clustering.FirstActivityCluster;
-import uni.cluster.clustering.SleepingCluster;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  *
  * @author ITE
  */
 public class Test {
-    public static void main(String[] args) throws ParseException, IOException{
-        //String testTime = "23:12:45";
-        //Timestamp timestamp = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd ").format(new Date()).concat(testTime));
-        //System.out.println(timestamp.getHours());
-        IOReadWrite ioRW = new IOReadWrite();
-        List<FirstActivityCluster> a = new ArrayList();
-        List sdfd = new SleepingCluster().getAllFilesForSleepingCluster();
-         List<FirstActivityCluster> ab = new ArrayList();
+
+    public static void main(String[] args) throws ParseException, IOException {
+        String input_date = "2104-04-10";
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-mm-dd");
+        Date dt1 = format1.parse(input_date);
+        c.setTime(dt1);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        System.out.println("Day " + dayOfWeek);
     }
 }

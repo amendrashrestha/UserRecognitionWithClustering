@@ -6,6 +6,7 @@ package uni.cluster.parser.model;
 public class Posts {
     private String time;
     private String content;
+    private String date;
 
     /**
      * @return the date
@@ -33,5 +34,19 @@ public class Posts {
      */
     public void setContent(String content) {
         this.content = content;
+    }
+
+    /**
+     * @return the date
+     */
+    public String getDate() {
+        return date;
+    }
+
+    /**
+     * @param date the date to set
+     */
+    public void setDate(String date) {
+        this.date = date;
     }
 }

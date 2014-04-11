@@ -32,20 +32,20 @@ public class SecondActivityClusterMain {
 
         List<User> allUserUnDividedUserList = ioReadWrite.getAllUsersAsObject();
         List<FirstActivityCluster> facList = facObj.readFirstActivityCluster();
-        String folderPath = IOProperties.All_ACTIVITY_BASE_PATH + "\\" + IOProperties.SLEEPING_FOLDER_NAME;
+        String folderPath = IOProperties.All_ACTIVITY_BASE_PATH + "/" + IOProperties.SLEEPING_FOLDER_NAME;
         // This gives us the sleeping cluster data
         List file = ioReadWrite.getAllFilesInADirectory(folderPath);
 
         for (int i = 0; i < file.size(); i++) {
             System.out.println("FileName: " + file.get(i));
-            String filename = folderPath + '\\' + file.get(i);
+            String filename = folderPath + '/' + file.get(i);
             List<SleepingCluster> scList = ioReadWrite.readSleepingClusterData(filename + IOProperties.SLEEPING_FILE_EXTENSION);
             
             List<SecondActivityCluster> scClusterSACList;
             String FacSc = file.get(i).toString().replaceAll("[\\D]", "");
 
-//                scClusterSACList = sacObj.getIndiviudalSACUserWithSplit(facList, scList, i, allUserUnDividedUserList);
-            scClusterSACList = sacObj.getIndiviudalSACUserWOSPlit(facList, scList, i, allUserUnDividedUserList);
+                scClusterSACList = sacObj.getIndiviudalSACUserWithSplit(facList, scList, i, allUserUnDividedUserList);
+//            scClusterSACList = sacObj.getIndiviudalSACUserWOSPlit(facList, scList, i, allUserUnDividedUserList);
 
             processSAC(scClusterSACList, FacSc);
         }

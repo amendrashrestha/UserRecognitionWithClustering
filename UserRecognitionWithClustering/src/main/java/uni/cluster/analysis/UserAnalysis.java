@@ -31,10 +31,9 @@ public class UserAnalysis {
         int divisionTimes = 0;
         Set SACUsers = new HashSet();
 
-        for (int i = 0; i < filesName.size(); i++) {
-            String fileName = clusterFolderPath + "\\" + filesName.get(i) + IOProperties.USER_FILE_EXTENSION;
+        for (String filesName1 : filesName) {
+            String fileName = clusterFolderPath + "/" + filesName1 + IOProperties.USER_FILE_EXTENSION;
             clusterUserID = ioReadWrite.readClusterData(fileName);
-                        
             for (int k = 0; k < clusterUserID.size(); k++) {
                 aliasList = new ArrayList<>();
                 for (int j = 0; j < clusterUserID.size(); j++) {

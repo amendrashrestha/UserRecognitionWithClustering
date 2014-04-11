@@ -54,7 +54,7 @@ public class SecondActivityCluster {
      * about the time frame which has met the criteria for that user) as a
      * List<SecondActivityCluster>
      *
-     * @param List<User>
+     * @param userList
      * @return List<SecondActivityCluster>
      */
     public List<SecondActivityCluster> getUserInSameClusterForSecondActivityCluster(List<User> userList) {
@@ -105,7 +105,7 @@ public class SecondActivityCluster {
     }
 
     public List<SecondActivityCluster> getIndiviudalSACUserWOSPlit(List<FirstActivityCluster> facList, List<SleepingCluster> scList, int scFrame, List<User> allUserUnDividedUserList) {
-        List<SecondActivityCluster> SACUserList = new ArrayList<>();
+        List<SecondActivityCluster> SACUserList;
         User userObj = new User();
         List<User> unDividedUserList = userObj.getInitialUserForSecondActivityCluster(facList, scList, allUserUnDividedUserList);
 
@@ -115,7 +115,7 @@ public class SecondActivityCluster {
     }
 
     public List<SecondActivityCluster> getIndiviudalSACUserWithSplit(List<FirstActivityCluster> facList, List<SleepingCluster> scList, int scFrame, List<User> allUserUnDividedUserList) {
-        List<SecondActivityCluster> SACUserList = new ArrayList<>();
+        List<SecondActivityCluster> SACUserList;
         User userObj = new User();
         UserDivision userDivisionObj = new UserDivision();
         SecondActivityCluster sacObj = new SecondActivityCluster();

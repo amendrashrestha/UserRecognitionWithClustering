@@ -36,23 +36,24 @@ public class CreateParser {
                 String[] parts = postDateTime.split("T");
                 post.setCreatedPostDate(parts[0]);
                 post.setCreatedPost(parts[1].replace("Z", ""));
+                String postCreatedDate = post.getCreatedPostDate();
                 String postTime = post.getCreatedPost();
 
                 //write both time and text
-                String getText = createContentToWrite(postTime, postContent);
+                //String getText = createContentToWrite(postTime, postCreatedDate, postContent);
 
-                //writing only time
-                //String getText = createContentToWrite(post.getCreatedPost());
+                //writing only date and time
+                String getText = createContentToWrite(postTime, postCreatedDate);
                 ioRW.writeToFile(userID, getText);
             }
         }
     }
 
-    public String createContentToWrite(String createdPostTime, String message) {
-        return createdPostTime + " " + message;
+    public String createContentToWrite(String createdPostTime, String postCreatedDate, String message) {
+        return createdPostTime + " " + postCreatedDate + " " + message;
     }
 
-    public String createContentToWrite(String createdPostTime) {
-        return createdPostTime;
+    public String createContentToWrite(String time, String date) {
+        return time + " " + date;
     }
 }

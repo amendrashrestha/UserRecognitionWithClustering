@@ -6,8 +6,8 @@ package uni.cluster.IOHandler;
 public class IOProperties {
 
 //    public static final String XML_DATA_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2008\\posts\\";
-    public static final String XML_DATA_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2003\\posts\\";
-    public static final String All_ACTIVITY_BASE_PATH = "C:\\Users\\ITE\\Downloads\\2003\\ActivityData\\";
+    public static final String XML_DATA_FILE_PATH = System.getProperty("user.home") + "/Downloads/2007/posts";
+    public static final String All_ACTIVITY_BASE_PATH = System.getProperty("user.home") + "/Downloads/Test/ActivityData/"; 
 //    public static final String All_ACTIVITY_BASE_PATH = "C:\\Users\\ITE\\Downloads\\TestData\\ActivityData\\";
     /**
      * This is the base path for all the created data throughout the experiment.
@@ -17,9 +17,10 @@ public class IOProperties {
 //    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2008\\UsersPost\\150K\\";
     //For other activity thing
 //    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2003\\UsersPost\\";
-    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2003\\UsersPostWithContent\\";
+//    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2003\\UsersPostWithContent\\";
+    public static final String INDIVIDUAL_USER_FILE_PATH = System.getProperty("user.home") + "/Downloads/Test/UsersPostTime/";
     
-    public static final String All_YEAR_FILES_BASE_PATH = "C:\\Users\\ITE\\Downloads\\TestData\\UsersPost\\";
+    public static final String All_YEAR_FILES_BASE_PATH = System.getProperty("user.home") + "/Downloads/TestData/UsersPost/";
     public static final String CLUSTER_FOLDER_NAME = "Cluster Data";
     public static final String FEATURE_VECTOR_FOLDER_NAME = "Feature Vector";
     /**
@@ -52,5 +53,6 @@ public class IOProperties {
     public static final String SECOND_ACTIVITY_FILE_NAME = "secondactivitycluster";
     public static final String SECOND_ACTIVITY_FILE_EXTENSION = ".txt";
     
-    public static final String FUNCTION_WORDS_PATH = "C:\\functionWord\\function_words.txt";
+//    public static final String FUNCTION_WORDS_PATH = "C:\\functionWord\\function_words.txt";
+    public static final String FUNCTION_WORDS_PATH = System.getProperty("user.home") + "/functionWord/function_words.txt";
 }
