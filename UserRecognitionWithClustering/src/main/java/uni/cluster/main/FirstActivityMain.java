@@ -48,12 +48,6 @@ public class FirstActivityMain {
          * First Activity Cluster without spliting users
          */
         List<User> users = user.setCategorizedTimeToUser(tempUsers);
-        //users = user.setCategorizedDayToUser(tempUsers);
-        //users = user.setCategorizedMonthToUser(tempUsers);
-        users = user.setCategorizedDayOfMonthToUser(tempUsers);
-        System.out.println("User posts Week " + Arrays.toString(users.get(0).getClassifiedDayVector()));
-        System.out.println("User posts Month " + Arrays.toString(users.get(0).getClassifiedMonthVector()));
-        System.out.println("User posts Day Of Month " + Arrays.toString(users.get(0).getClassifiedDayOfMonthVector()));
         List facUsers = fac.generateUserFirstActivityCluster(users);
         fac.writeFirstActivityCluster(facUsers);
 

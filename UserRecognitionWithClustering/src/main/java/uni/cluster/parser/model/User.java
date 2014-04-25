@@ -46,6 +46,20 @@ public class User {
      * defined in class "com.post.parser.clustering.FirstActivityCluster"
      */
     private int[] classifiedDayOfMonthVector;
+
+    /*
+     * This variable contains the total number of posts posted in an each hour of a day,
+     * The information about the avaiable day frame can be viewed on method "timeCategoryDefinition()" 
+     * defined in class "com.post.parser.clustering.FirstActivityCluster"
+     */
+    private int[] classifiedHourOfDayVector;
+
+    /*
+     * This variable contains the total number of posts posted in an each hour of a day,
+     * The information about the avaiable day frame can be viewed on method "timeCategoryDefinition()" 
+     * defined in class "com.post.parser.clustering.FirstActivityCluster"
+     */
+    private int[] classifiedTypeOfWeekVector;
     /*
      * This variable contains the boolean 0/1 values in int[] array.
      * If the particular time frame has more posts than 20% of the total post posted by the user the value is updated as 1.
@@ -72,7 +86,9 @@ public class User {
         this.classifiedTimeVector = new int[]{0, 0, 0, 0, 0, 0};
         this.classifiedDayVector = new int[]{0, 0, 0, 0, 0, 0, 0};
         this.classifiedMonthVector = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        this.classifiedHourOfDayVector = new int[24];
         this.classifiedDayOfMonthVector = new int[31];
+        this.classifiedTypeOfWeekVector = new int[2];
         this.firstActivityVector = new int[]{0, 0, 0, 0, 0, 0};
         this.sleepingClusterVector = new int[]{0, 0, 0, 0, 0, 0};
         this.secondActivityVector = new int[]{0, 0, 0, 0, 0, 0};
@@ -130,8 +146,7 @@ public class User {
     public void setClassifiedTimeVector(int[] classifiedTimeVector) {
         this.classifiedTimeVector = classifiedTimeVector;
     }
-    
-    
+
     /**
      * @return the classifiedDayVector
      */
@@ -145,8 +160,8 @@ public class User {
     public void setClassifiedDayVector(int[] classifiedDayVector) {
         this.classifiedDayVector = classifiedDayVector;
     }
-    
-        /**
+
+    /**
      * @return the classifiedMonthVector
      */
     public int[] getClassifiedMonthVector() {
@@ -159,8 +174,8 @@ public class User {
     public void setClassifiedMonthVector(int[] classifiedMonthVector) {
         this.classifiedMonthVector = classifiedMonthVector;
     }
-    
-        /**
+
+    /**
      * @return the classifiedDayOfMonthVector
      */
     public int[] getClassifiedDayOfMonthVector() {
@@ -172,6 +187,34 @@ public class User {
      */
     public void setClassifiedDayOfMonthVector(int[] classifiedDayOfMonthVector) {
         this.classifiedDayOfMonthVector = classifiedDayOfMonthVector;
+    }
+
+    /**
+     * @return the classifiedHourOfDayVector
+     */
+    public int[] getClassifiedHourOfDayVector() {
+        return classifiedHourOfDayVector;
+    }
+
+    /**
+     * @param classifiedHourOfDayVector the classifiedHourOfDayVector to set
+     */
+    public void setClassifiedHourOfDayVector(int[] classifiedHourOfDayVector) {
+        this.classifiedHourOfDayVector = classifiedHourOfDayVector;
+    }
+
+    /**
+     * @return the classifiedTypeOfWeekVector
+     */
+    public int[] getClassifiedTypeOfWeekVector() {
+        return classifiedTypeOfWeekVector;
+    }
+
+    /**
+     * @param classifiedTypeOfWeekVector the classifiedTypeOfWeekVector to set
+     */
+    public void setClassifiedTypeOfWeekVector(int[] classifiedTypeOfWeekVector) {
+        this.classifiedTypeOfWeekVector = classifiedTypeOfWeekVector;
     }
 
     /**
@@ -217,6 +260,49 @@ public class User {
     }
 
     /**
+     * @param user
+     * @return user
+     * @throws java.text.ParseException
+     * @Desc This function populates the "classifiedTimeVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified time range which has been described in getTimeCategory(int
+     * hours) in this class.
+     */
+    public User setCategorizedTypeOfWeekToUser(User user) throws ParseException {
+        int[] userTimeVector = user.getClassifiedTypeOfWeekVector();
+        for (Posts posts : user.getUserPost()) {
+            String date = posts.getDate();
+            int dayOfWeek = getDayOfWeek(date);
+            int typeOfWeek = getTypeOfWeek(dayOfWeek);
+
+            userTimeVector[typeOfWeek] = userTimeVector[typeOfWeek] + 1;
+        }
+        user.setClassifiedTypeOfWeekVector(userTimeVector);
+
+        return user;
+    }
+
+    /**
+     * @param user
+     * @return user
+     * @Desc This function populates the "classifiedTimeVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified time range which has been described in getTimeCategory(int
+     * hours) in this class.
+     */
+    public User setCategorizedHourOfDayToUser(User user) {
+        int[] userTimeVector = user.getClassifiedHourOfDayVector();
+        for (Posts posts : user.getUserPost()) {
+            Timestamp ts = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd ").format(new Date()).concat(posts.getTime()));
+            int timeCategory = ts.getHours();
+            userTimeVector[timeCategory] = userTimeVector[timeCategory] + 1;
+        }
+        user.setClassifiedHourOfDayVector(userTimeVector);
+
+        return user;
+    }
+
+    /**
      * @param userList
      * @Desc This function populates the "classifiedTimeVector" variable of the
      * com.post.parser.model.User class. It gives the total number of posts in
@@ -239,74 +325,162 @@ public class User {
         }
         return userList;
     }
-    
+
+    /**
+     * @param user
+     * @Desc This function populates the "classifiedTimeVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified time range which has been described in getTimeCategory(int
+     * hours) in this class.
+     * @return List<User>
+     */
+    public User setCategorizedTimeToUser(User user) {
+        ClusterCommons cc = new ClusterCommons();
+        int[] userTimeVector = user.getClassifiedTimeVector();
+        for (Posts posts : user.getUserPost()) {
+            Timestamp ts = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd ").format(new Date()).concat(posts.getTime()));
+            int timeCategory = cc.getTimeCategory(ts.getHours());
+            if (timeCategory < 6) {
+                userTimeVector[timeCategory] = userTimeVector[timeCategory] + 1;
+            }
+        }
+        user.setClassifiedTimeVector(userTimeVector);
+
+        return user;
+    }
+
     /**
      * @param userList
-     * @return 
+     * @return
      * @throws java.text.ParseException
      * @Desc This function populates the "classifiedDayVector" variable of the
      * com.post.parser.model.User class. It gives the total number of posts in
      * the specified day range which has been described in getDayCategory(int
      * DayOfWeek) in this class.
      */
-    public List<User> setCategorizedDayToUser(List<User> userList) throws ParseException{
-        for(User user : userList){
+    public List<User> setCategorizedDayToUser(List<User> userList) throws ParseException {
+        for (User user : userList) {
             int[] userDayVector = user.getClassifiedDayVector();
-            for(Posts posts : user.getUserPost()){
+            for (Posts posts : user.getUserPost()) {
                 String date = posts.getDate();
                 int DayOfWeek = getDayOfWeek(date) - 1;
 //                System.out.println("Day Of Week " + DayOfWeek);
                 userDayVector[DayOfWeek] = userDayVector[DayOfWeek] + 1;
             }
             user.setClassifiedDayVector(userDayVector);
-        }        
+        }
         return userList;
     }
-    
+
     /**
-     * @param userList
-     * @return 
+     * @param user
+     * @return
      * @throws java.text.ParseException
      * @Desc This function populates the "classifiedDayVector" variable of the
      * com.post.parser.model.User class. It gives the total number of posts in
      * the specified day range which has been described in getDayCategory(int
      * DayOfWeek) in this class.
      */
-    public List<User> setCategorizedMonthToUser(List<User> userList) throws ParseException{
-        for(User user : userList){
+    public User setCategorizedDayToUser(User user) throws ParseException {
+        int[] userDayVector = user.getClassifiedDayVector();
+        for (Posts posts : user.getUserPost()) {
+            String date = posts.getDate();
+            int DayOfWeek = getDayOfWeek(date) - 1;
+//                System.out.println("Day Of Week " + DayOfWeek);
+            userDayVector[DayOfWeek] = userDayVector[DayOfWeek] + 1;
+        }
+        user.setClassifiedDayVector(userDayVector);
+
+        return user;
+    }
+
+    /**
+     * @param userList
+     * @return
+     * @throws java.text.ParseException
+     * @Desc This function populates the "classifiedDayVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified day range which has been described in getDayCategory(int
+     * DayOfWeek) in this class.
+     */
+    public List<User> setCategorizedMonthToUser(List<User> userList) throws ParseException {
+        for (User user : userList) {
             int[] userMonthVector = user.getClassifiedMonthVector();
-            for(Posts posts : user.getUserPost()){
+            for (Posts posts : user.getUserPost()) {
                 String date = posts.getDate();
                 int MonthOfYear = getMonthOfYear(date);
 //                System.out.println("Day Of Week " + DayOfWeek);
                 userMonthVector[MonthOfYear] = userMonthVector[MonthOfYear] + 1;
             }
             user.setClassifiedMonthVector(userMonthVector);
-        }        
+        }
         return userList;
     }
-    
+
     /**
-     * @param userList
-     * @return 
+     * @param user
+     * @return
      * @throws java.text.ParseException
      * @Desc This function populates the "classifiedDayVector" variable of the
      * com.post.parser.model.User class. It gives the total number of posts in
      * the specified day range which has been described in getDayCategory(int
      * DayOfWeek) in this class.
      */
-    public List<User> setCategorizedDayOfMonthToUser(List<User> userList) throws ParseException{
-        for(User user : userList){
+    public User setCategorizedMonthToUser(User user) throws ParseException {
+        int[] userMonthVector = user.getClassifiedMonthVector();
+        for (Posts posts : user.getUserPost()) {
+            String date = posts.getDate();
+            int MonthOfYear = getMonthOfYear(date);
+//                System.out.println("Day Of Week " + DayOfWeek);
+            userMonthVector[MonthOfYear] = userMonthVector[MonthOfYear] + 1;
+        }
+        user.setClassifiedMonthVector(userMonthVector);
+
+        return user;
+    }
+
+    /**
+     * @param userList
+     * @return
+     * @throws java.text.ParseException
+     * @Desc This function populates the "classifiedDayVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified day range which has been described in getDayCategory(int
+     * DayOfWeek) in this class.
+     */
+    public List<User> setCategorizedDayOfMonthToUser(List<User> userList) throws ParseException {
+        for (User user : userList) {
             int[] userDayOfMonthVector = user.getClassifiedDayOfMonthVector();
-            for(Posts posts : user.getUserPost()){
+            for (Posts posts : user.getUserPost()) {
                 String date = posts.getDate();
                 int DayOfMonth = getDayOfMonth(date) - 1;
                 System.out.println("Day Of Week " + DayOfMonth);
                 userDayOfMonthVector[DayOfMonth] = userDayOfMonthVector[DayOfMonth] + 1;
             }
             user.setClassifiedDayOfMonthVector(userDayOfMonthVector);
-        }        
+        }
         return userList;
+    }
+
+    /**
+     * @param user
+     * @return
+     * @throws java.text.ParseException
+     * @Desc This function populates the "classifiedDayVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts in
+     * the specified day range which has been described in getDayCategory(int
+     * DayOfWeek) in this class.
+     */
+    public User setCategorizedDayOfMonthToUser(User user) throws ParseException {
+        int[] userDayOfMonthVector = user.getClassifiedDayOfMonthVector();
+        for (Posts posts : user.getUserPost()) {
+            String date = posts.getDate();
+            int DayOfMonth = getDayOfMonth(date) - 1;
+            userDayOfMonthVector[DayOfMonth] = userDayOfMonthVector[DayOfMonth] + 1;
+        }
+        user.setClassifiedDayOfMonthVector(userDayOfMonthVector);
+
+        return user;
     }
 
     /**
@@ -519,7 +693,7 @@ public class User {
     private int getMonthOfYear(String date) throws ParseException {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-        Date dt1 = format1.parse(date);   
+        Date dt1 = format1.parse(date);
         c.setTime(dt1);
         int monthOfYear = c.get(Calendar.MONTH);
         return monthOfYear;
@@ -528,9 +702,18 @@ public class User {
     private int getDayOfMonth(String date) throws ParseException {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-        Date dt1 = format1.parse(date);   
+        Date dt1 = format1.parse(date);
         c.setTime(dt1);
         int monthOfYear = c.get(Calendar.DAY_OF_MONTH);
         return monthOfYear;
     }
+
+    private int getTypeOfWeek(int day) throws ParseException {
+
+        if (day >= 2 && day <= 6) {
+            return 0;
+        } else 
+            return 1;
+    }
+    
 }

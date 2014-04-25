@@ -16,7 +16,7 @@ public class Posts {
     }
 
     /**
-     * @param date the date to set
+     * @param time
      */
     public void setTime(String time) {
         this.time = time;
