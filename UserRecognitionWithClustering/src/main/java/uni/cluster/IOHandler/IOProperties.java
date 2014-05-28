@@ -18,7 +18,7 @@ public class IOProperties {
     //For other activity thing
 //    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2003\\UsersPost\\";
 //    public static final String INDIVIDUAL_USER_FILE_PATH = "C:\\Users\\ITE\\Downloads\\2003\\UsersPostWithContent\\";
-    public static final String INDIVIDUAL_USER_FILE_PATH = System.getProperty("user.home") + "/Downloads/BoardDataSet/2007/UsersPostWithContent/";
+    public static final String INDIVIDUAL_USER_FILE_PATH = System.getProperty("user.home") + "/Downloads/BoardDataSet/2007/UsersPostTime/";
 //    public static final String INDIVIDUAL_USER_FILE_PATH = System.getProperty("user.home") + "/Downloads/WekaTestData/UsersPostTime/";
     
     public static final String All_YEAR_FILES_BASE_PATH = System.getProperty("user.home") + "/Downloads/2003/UsersPostTime/";

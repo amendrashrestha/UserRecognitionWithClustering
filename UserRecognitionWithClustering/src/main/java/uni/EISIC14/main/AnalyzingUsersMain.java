@@ -7,7 +7,7 @@ package uni.EISIC14.main;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import uni.EISIC14.timeStylo.analysis.UserAnalysis;
+import uni.EISIC14.analysis.AnalyzeTime;
 
 
 
@@ -18,7 +18,7 @@ import uni.EISIC14.timeStylo.analysis.UserAnalysis;
 public class AnalyzingUsersMain {
 
     public static void main(String args[]) throws FileNotFoundException, IOException, SQLException {
-        UserAnalysis init = new UserAnalysis();
+        AnalyzeTime init = new AnalyzeTime();
         init.executeAnalysis();
     }
 }

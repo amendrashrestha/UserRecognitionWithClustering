@@ -1,4 +1,4 @@
-package uni.EISIC14.timeStylo.analysis;
+package uni.EISIC14.analysis;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,7 +8,6 @@ import java.util.List;
 import uni.cluster.IOHandler.IOProperties;
 import uni.cluster.IOHandler.IOReadWrite;
 import uni.cluster.analysis.*;
-import uni.cluster.clustering.UserDivision;
 import uni.cluster.parser.model.Alias;
 import uni.cluster.parser.model.User;
 
@@ -17,7 +16,7 @@ import uni.cluster.parser.model.User;
  *
  * @author ITE
  */
-public class UserAnalysis {
+public class AnalyzeTime {
 
     public void executeAnalysis() throws FileNotFoundException, IOException, SQLException {
 
@@ -25,7 +24,7 @@ public class UserAnalysis {
         List<User> userList = ioReadWrite.getAllUsersAsObject();
 
         //For passing limited number of sorted users  
-        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(userList, 1000);
+        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(userList, 5);
 
         List<Alias> aliasList;
         int divisionTimes;
@@ -43,10 +42,10 @@ public class UserAnalysis {
                 } else {
                     divisionTimes = 1;
                 }
-                aliasList = ioReadWrite.convertTxtFileToAliasObjAndDivide(divisionTimes, basePath, directoryName, id, ext, aliasList);
+                aliasList = ioReadWrite.convertTxtFileToAliasObjAndDivideForTimeFeat(divisionTimes, basePath, directoryName, id, ext, aliasList);
             }
-            TimeAndStylometricMatching sMatching = new TimeAndStylometricMatching();
-            sMatching.executeStylo(aliasList);
+            AnalyzePostTimeWithHourofDay compare = new AnalyzePostTimeWithHourofDay();
+            compare.executePostCompare(aliasList);
         }
     }
 }

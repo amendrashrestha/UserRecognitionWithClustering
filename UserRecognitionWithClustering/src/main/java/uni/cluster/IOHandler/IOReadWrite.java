@@ -106,7 +106,8 @@ public class IOReadWrite {
 
     /**
      * This method copy file from one directory to another
-     * @param fileName 
+     *
+     * @param fileName
      */
     public void copyFile(String fileName) {
         try {
@@ -117,7 +118,7 @@ public class IOReadWrite {
 
             String existingUserFileLocation = IOProperties.All_YEAR_FILES_BASE_PATH + getUserFolderName;
             String existingUserFilePath = existingUserFileLocation + "/" + newUserFileName;
-            
+
             Path original = Paths.get(newUserFilePath);
             Path destination = Paths.get(existingUserFilePath);
 
@@ -310,7 +311,7 @@ public class IOReadWrite {
             if (time.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
                 posts.setTime(time);
                 posts.setDate(date);
-                posts.setContent(temp[i].substring(20, temp[i].length()));
+//                posts.setContent(temp[i].substring(20, temp[i].length()));
                 postList.add(posts);
                 //System.out.println(date);
             } else {
@@ -435,20 +436,19 @@ public class IOReadWrite {
             allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList1);
 
             for (Object allFilesSize1 : allFilesSize) {
-                if(allFilesSize1.toString().contains(".DS_S")){
+                if (allFilesSize1.toString().contains(".DS_S")) {
                     String dsFilePath = IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList1 + "/" + allFilesSize1.toString();
                     File dsFile = new File(dsFilePath);
                     dsFile.delete();
-                }
-                else{
-                    User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH, 
+                } else {
+                    User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                             directoryList1.toString(), allFilesSize1.toString(), IOProperties.USER_FILE_EXTENSION);
-                /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
-                allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
-                if (user.getUserPost().size() >= 400) {
-                    allFiles.add(user);
+                    /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
+                     allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
+                    if (user.getUserPost().size() >= 400) {
+                        allFiles.add(user);
+                    }
                 }
-                }                
             }
         }
         return allFiles;
@@ -528,7 +528,7 @@ public class IOReadWrite {
 
     public void writeFirstActivityClusterData(List<FirstActivityCluster> firstActivityCluster) throws IOException {
         CreateDirectory(IOProperties.All_ACTIVITY_BASE_PATH, IOProperties.FIRST_ACTIVITY_FOLDER_NAME);
-        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH +IOProperties.FIRST_ACTIVITY_FOLDER_NAME
+        String completeFileNameNPath = IOProperties.All_ACTIVITY_BASE_PATH + IOProperties.FIRST_ACTIVITY_FOLDER_NAME
                 + "/" + IOProperties.FIRST_ACTIVITY_FILE_NAME + IOProperties.FIRST_ACTIVITY_FILE_EXTENSION;
 
         System.out.println(completeFileNameNPath);
@@ -693,8 +693,8 @@ public class IOReadWrite {
                 File file = new File(completeFilePath);
                 ioRW.removeDuplicateRowsFromFile(file);
                 BufferedReader reader = new BufferedReader(new FileReader(file));
-                
-                int clusterName = Integer.valueOf(fileName.replaceAll("\\D",""));
+
+                int clusterName = Integer.valueOf(fileName.replaceAll("\\D", ""));
                 String line = null;
 
                 if (file.exists()) {
@@ -705,10 +705,10 @@ public class IOReadWrite {
                         //List<Integer> clusterNumber = returnDigits(ClusterInfo);
 
                         //for (int k = 0; k < clusterNumber.size(); k++) {
-                            //if (clusterNumber.get(k) == 1) {
-                                writeStylometricClusterData(userID, clusterName);
-                           // }
-                       // }
+                        //if (clusterNumber.get(k) == 1) {
+                        writeStylometricClusterData(userID, clusterName);
+                        // }
+                        // }
                     }
                 }
             }
@@ -828,6 +828,7 @@ public class IOReadWrite {
             }
         }
         alias.setPostTime(timeList);
+        alias.setPostDate(postList);
         alias.setPosts(postList);
         return alias;
     }
@@ -876,12 +877,66 @@ public class IOReadWrite {
 
         if (divisionFlag == 2) {
             aliasA.setPostTime(timeListA);
-            aliasA.setPosts(postListA);
+            // aliasA.setPosts(postListA);
             aliasList.add(0, aliasA);
         }
 
         aliasB.setPostTime(timeListB);
-        aliasB.setPosts(postListB);
+        // aliasB.setPosts(postListB);
+        aliasList.add(aliasB);
+
+        return aliasList;
+    }
+
+    public List<Alias> convertTxtFileToAliasObjAndDivideForTimeFeat(int divisionFlag, String basePath, String directoryName,
+            String fileName, String extension, List<Alias> aliasList) throws FileNotFoundException, IOException {
+        String userPostAsString = readTxtFileAsString(basePath, directoryName, fileName, extension);
+        String temp[] = null;
+        Alias aliasA = new Alias();
+        Alias aliasB = new Alias();
+        List<String> dateListA = new ArrayList<>();
+        List<String> timeListA = new ArrayList<>();
+        List<String> dateListB = new ArrayList<>();
+        List<String> timeListB = new ArrayList<>();
+        aliasA.setUserID(fileName);
+        aliasB.setUserID(fileName);
+        aliasA.setType("A");
+        aliasB.setType("B");
+        if (userPostAsString.contains(IOProperties.DATA_SEPERATOR)) {
+            temp = userPostAsString.split(IOProperties.DATA_SEPERATOR);
+        } else {
+            temp = new String[1];
+            temp[0] = userPostAsString;
+
+        }
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].length() == 8) {
+                temp[i] = temp[i] + "  ";
+            }
+            String time = temp[i].substring(0, 8);
+            String date = temp[i].substring(9, 19);
+            if (time.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                if (i % 2 == 0 && divisionFlag == 2) {
+                    timeListA.add(time);
+                    dateListA.add(date);
+                } else if (i % 2 != 0) {
+                    timeListB.add(time);
+                    dateListB.add(date);
+                }
+            } else {
+                continue;
+            }
+        }
+
+        if (divisionFlag == 2) {
+            aliasA.setPostTime(timeListA);
+            aliasA.setPostDate(dateListA);
+            aliasList.add(0, aliasA);
+        }
+
+        aliasB.setPostTime(timeListB);
+        aliasB.setPostDate(dateListB);
         aliasList.add(aliasB);
 
         return aliasList;

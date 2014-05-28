@@ -45,7 +45,7 @@ public final class PostGraphMain {
         //getting userID from text file and setting into combo box
         final JComboBox cmbUserID = new JComboBox();
         List<User> tempUserList = io.getAllUsersAsObject();
-        tempUserList = io.returnLimitedSortedUser(tempUserList, 2);
+        tempUserList = io.returnLimitedSortedUser(tempUserList, 1);
         for (int i = 0; i < tempUserList.size(); i++) {
             User user = tempUserList.get(i);
             cmbUserID.addItem(user.getId());

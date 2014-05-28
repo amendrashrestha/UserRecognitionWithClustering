@@ -17,6 +17,7 @@ public class Alias {
     private ArrayList<ArrayList<Float>> featureVectorPostList;
     public List<String> posts;
     public List<String> postTime;
+    public List<String> postDate;
 
     public Alias(String userID) throws SQLException {
         this.user = userID;
@@ -115,7 +116,6 @@ public class Alias {
     }
 
     public double[] getTimeVector() throws SQLException {
-
         double[] rr = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         
@@ -146,6 +146,14 @@ public class Alias {
 
     public List getPostTime() {
         return postTime;
+    }
+    
+     public void setPostDate(List postDate) {
+        this.postDate = postDate;
+    }
+
+    public List getPostDate() {
+        return postDate;
     }
 
     /**
