@@ -310,7 +310,7 @@ public class IOReadWrite {
             if (time.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
                 posts.setTime(time);
                 posts.setDate(date);
-//                posts.setContent(temp[i].substring(20, temp[i].length()));
+                posts.setContent(temp[i].substring(20, temp[i].length()));
                 postList.add(posts);
                 //System.out.println(date);
             } else {
@@ -429,7 +429,7 @@ public class IOReadWrite {
         System.out.println(IOProperties.INDIVIDUAL_USER_FILE_PATH);
         List directoryList = ioRW.getAllDirectories(IOProperties.INDIVIDUAL_USER_FILE_PATH);
         List allFiles = new ArrayList();
-        List allFilesSize = new ArrayList();
+        List allFilesSize;
         for (Object directoryList1 : directoryList) {
             System.out.println(directoryList1);
             allFilesSize = ioRW.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + directoryList1);
@@ -445,11 +445,10 @@ public class IOReadWrite {
                             directoryList1.toString(), allFilesSize1.toString(), IOProperties.USER_FILE_EXTENSION);
                 /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                 allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
-                if (user.getUserPost().size() >= 10) {
+                if (user.getUserPost().size() >= 400) {
                     allFiles.add(user);
                 }
-                }
-                
+                }                
             }
         }
         return allFiles;
@@ -816,9 +815,9 @@ public class IOReadWrite {
         }
 
         for (int i = 0; i < temp.length; i++) {
-            if (temp[i].toString().matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
-                    || temp[i].toString().length() == 8) {
-                temp[i] = temp[i].toString() + "  ";
+            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].length() == 8) {
+                temp[i] = temp[i] + "  ";
             }
             String date = temp[i].substring(0, 8);
             if (date.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
@@ -954,7 +953,7 @@ public class IOReadWrite {
 
     public List<User> returnLimitedSortedUser(List<User> userList, int size) {
         Collections.sort(userList, new ReturnSortedUserList());
-        List<User> tempUsers = new ArrayList();
+        List<User> tempUsers;
         tempUsers = userList.subList(0, size);
         return tempUsers;
     }

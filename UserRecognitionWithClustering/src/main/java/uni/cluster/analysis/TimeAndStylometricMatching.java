@@ -386,6 +386,7 @@ public final class TimeAndStylometricMatching {
      * For test purpose Calculate similarity between 1st user of list with rest
      * of the user in list. magnitude of posted time is normalized before
      * calculating Manhattan distance between two users
+     * @throws java.sql.SQLException
      */
     public void compareAllPairsOfAliases() throws SQLException {
         tempDisplayInfo = new ArrayList<>();

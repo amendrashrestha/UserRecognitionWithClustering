@@ -1,16 +1,11 @@
 package uni.cluster.main;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 
@@ -51,6 +46,7 @@ public class Test {
                  br.write(sb.toString());
                  }*/CSVWriter writer = new CSVWriter(new FileWriter("/Users/amendrashrestha/Desktop/yourfile.csv"), ',')) {
             // feed in your array (or convert your data to an array)
+            String[] header = new String[] {"Sun","Mon","Tue","Wed","Thur","Fri","Sat"};
             int[] test = new int[] {1,2,3,5,6,7};
             int[] test1 = new int[] {8,9,10,11};
             

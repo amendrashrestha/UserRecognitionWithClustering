@@ -83,16 +83,21 @@ public class User {
      */
     public User() {
         this.type = UserType.UNDEFINED;
+        this.firstActivityVector = new int[]{0, 0, 0, 0, 0, 0};
+        this.sleepingClusterVector = new int[]{0, 0, 0, 0, 0, 0};
+        this.secondActivityVector = new int[]{0, 0, 0, 0, 0, 0};
         this.classifiedTimeVector = new int[]{0, 0, 0, 0, 0, 0};
         this.classifiedDayVector = new int[]{0, 0, 0, 0, 0, 0, 0};
         this.classifiedMonthVector = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         this.classifiedHourOfDayVector = new int[24];
         this.classifiedDayOfMonthVector = new int[31];
         this.classifiedTypeOfWeekVector = new int[2];
-        this.firstActivityVector = new int[]{0, 0, 0, 0, 0, 0};
-        this.sleepingClusterVector = new int[]{0, 0, 0, 0, 0, 0};
-        this.secondActivityVector = new int[]{0, 0, 0, 0, 0, 0};
     }
+    
+    /*public User(int[] classifiedTimeVector, int[] classifiedDayVector, int[] classifiedMonthVector, 
+            int[] classifiedHourOfDayVector, int[] classifiedDayOfMonthVector, int[] classifiedTypeOfWeekVector){
+        
+    }*/
 
     public List<Posts> getUserPost() {
         return userPost;

@@ -46,6 +46,72 @@ public class UserDivision {
         return finalList;
     }
 
+    /**
+     * @Desc This function divides all the user into two users as A, B, C D, E
+     * where (user:A + user:B + user:C + user:D + user:E) = total number of
+     * posts of the original (user:U)
+     * @param userList
+     * @return List<User>
+     */
+    public List<User> divideUsers(List<User> userList) {
+        List finalList = new ArrayList();
+        for (User userList1 : userList) {
+            User user = (User) userList1;
+            List firstPostList = new ArrayList();
+            List secondPostList = new ArrayList();
+            List thirdPostList = new ArrayList();
+            List fourthPostList = new ArrayList();
+            List fifthPostList = new ArrayList();
+            List postList = user.getUserPost();
+            int equalPostSize = 445;
+
+            for (int j = 0; j < equalPostSize; j++) {
+                int k = j % 5;
+                if (k == 0) {
+                    firstPostList.add((Posts) postList.get(j));
+                } else if (k == 1) {
+                    secondPostList.add((Posts) postList.get(j));
+                } else if (k == 2) {
+                    thirdPostList.add((Posts) postList.get(j));
+                } else if (k == 3) {
+                    fourthPostList.add((Posts) postList.get(j));
+                } else if (k == 4) {
+                    fifthPostList.add((Posts) postList.get(j));
+                }
+            }
+            User userA = new User();
+            User userB = new User();
+            User userC = new User();
+            User userD = new User();
+            User userE = new User();
+
+            userA.setType(UserType.A);
+            userB.setType(UserType.B);
+            userC.setType(UserType.C);
+            userD.setType(UserType.D);
+            userE.setType(UserType.E);
+
+            userA.setId(user.getId());
+            userB.setId(user.getId());
+            userC.setId(user.getId());
+            userD.setId(user.getId());
+            userE.setId(user.getId());
+
+            userA.setUserPost(firstPostList);
+            userB.setUserPost(secondPostList);
+            userC.setUserPost(thirdPostList);
+            userD.setUserPost(fourthPostList);
+            userE.setUserPost(fifthPostList);
+
+            finalList.add(userA);
+            finalList.add(userB);
+            finalList.add(userC);
+            finalList.add(userD);
+            finalList.add(userE);
+        }
+        return finalList;
+    }
+
     public List divideUser(User user) {
         List finalList = new ArrayList();
         List firstPostList = new ArrayList();
@@ -73,12 +139,13 @@ public class UserDivision {
     }
 
     /**
+     * @param index
+     * @return 
      * @Desc This function divides the first user into two users as A and B
      * where (user:A + user:B) = total number of posts of the original (user:U).
      * Rest of the other users contain only half of the original post whereas
      * other post has been removed.
      * @param userList
-     * @return List<User>
      */
     public List<User> divideFirstUser(List<User> userList, int index) {
         List finalList = new ArrayList();
@@ -112,6 +179,7 @@ public class UserDivision {
         }
         return finalList;
     }
+
     /*public List<Alias> divideFirstAlias(List<Alias> aliasList, int index){
      List finalList = new ArrayList();
      for (int i = 0; i < aliasList.size(); i++) {
@@ -150,4 +218,5 @@ public class UserDivision {
      }
      return finalList;
      }*/
+
 }

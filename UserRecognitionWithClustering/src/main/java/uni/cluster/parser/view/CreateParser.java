@@ -40,10 +40,10 @@ public class CreateParser {
                 String postTime = post.getCreatedPost();
 
                 //write both time and text
-                //String getText = createContentToWrite(postTime, postCreatedDate, postContent);
+                String getText = createContentToWrite(postTime, postCreatedDate, postContent);
 
                 //writing only date and time
-                String getText = createContentToWrite(postTime, postCreatedDate);
+                //String getText = createContentToWrite(postTime, postCreatedDate);
                 ioRW.writeToFile(userID, getText);
             }
         }
