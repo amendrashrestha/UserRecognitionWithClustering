@@ -22,6 +22,8 @@ public class User {
     private int id;
     private List<Posts> userPost;
     private String type;
+    private List<String> postTime;
+    private List<String> postDate;
     /*
      * This variable contains the total number of posts, posted in an individual time frame,
      * The information about the avaiable time frame can be viewed on method "timeCategoryDefinition()" 
@@ -93,12 +95,11 @@ public class User {
         this.classifiedDayOfMonthVector = new int[31];
         this.classifiedTypeOfWeekVector = new int[2];
     }
-    
-    /*public User(int[] classifiedTimeVector, int[] classifiedDayVector, int[] classifiedMonthVector, 
-            int[] classifiedHourOfDayVector, int[] classifiedDayOfMonthVector, int[] classifiedTypeOfWeekVector){
-        
-    }*/
 
+    /*public User(int[] classifiedTimeVector, int[] classifiedDayVector, int[] classifiedMonthVector, 
+     int[] classifiedHourOfDayVector, int[] classifiedDayOfMonthVector, int[] classifiedTypeOfWeekVector){
+        
+     }*/
     public List<Posts> getUserPost() {
         return userPost;
     }
@@ -717,8 +718,36 @@ public class User {
 
         if (day >= 2 && day <= 6) {
             return 0;
-        } else 
+        } else {
             return 1;
+        }
     }
-    
+
+    /**
+     * @return the postTime
+     */
+    public List<String> getPostTime() {
+        return postTime;
+    }
+
+    /**
+     * @param postTime the postTime to set
+     */
+    public void setPostTime(List<String> postTime) {
+        this.postTime = postTime;
+    }
+
+    /**
+     * @return the postDate
+     */
+    public List<String> getPostDate() {
+        return postDate;
+    }
+
+    /**
+     * @param postDate the postDate to set
+     */
+    public void setPostDate(List<String> postDate) {
+        this.postDate = postDate;
+    }
 }

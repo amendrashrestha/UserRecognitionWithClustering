@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import uni.cluster.parser.model.Alias;
+import uni.cluster.parser.model.User;
 
 /**
  *
@@ -17,7 +17,7 @@ import uni.cluster.parser.model.Alias;
  */
 public class AnalyzePostTimeWithHourofDay {
 
-    public List<Alias> aliases; // The aliases we are interested in to compare
+    public List<User> aliases; // The aliases we are interested in to compare
     List tempDisplayInfo;
     List<Integer> rank = new ArrayList<>();
     int rankArray[] = {0, 0, 0, 0};
@@ -26,7 +26,7 @@ public class AnalyzePostTimeWithHourofDay {
     static HashMap<Integer, HashSet<Integer>> userResult = new HashMap<>();
     Set userBin = new HashSet();
 
-    void executePostCompare(List<Alias> aliasList) throws SQLException {
+    void executePostCompare(List<User> aliasList) throws SQLException {
         this.aliases = aliasList;
         compareAllPairsOfAliases();
         displayUserRank();
@@ -37,20 +37,25 @@ public class AnalyzePostTimeWithHourofDay {
 
         for (int i = 1; i < aliases.size(); i++) {
             List tempList = new ArrayList();
-            String user1 = aliases.get(0).getUser();
-            String user2 = aliases.get(i).getUser();
+            User mainUser = aliases.get(0);
+            User otherUsers = aliases.get(i);
+            String user1 = Integer.toString(mainUser.getId());
+            String user2 = Integer.toString(otherUsers.getId());
 
             /**
              * calculating time vector for alias
              */
             double timeMatch = 0.0;
-            double[] user1timeVector = aliases.get(0).getTimeVector();
-            double[] user2timeVector = aliases.get(i).getTimeVector();
+            mainUser.setCategorizedHourOfDayToUser(mainUser);
+            otherUsers.setCategorizedHourOfDayToUser(otherUsers);
 
-            user1timeVector = returnNormalizedTimeVector(user1timeVector);
-            user2timeVector = returnNormalizedTimeVector(user2timeVector);
+            int[] user1timeVector = mainUser.getClassifiedHourOfDayVector();
+            int[] user2timeVector = otherUsers.getClassifiedHourOfDayVector();
 
-            timeMatch = calculateManhattanTimeVector(user1timeVector, user2timeVector);
+            double[] normUser1timeVector = returnNormalizedTimeVector(user1timeVector);
+            double[] normUser2timeVector = returnNormalizedTimeVector(user2timeVector);
+
+            timeMatch = calculateManhattanTimeVector(normUser1timeVector, normUser2timeVector);
             float time = (float) timeMatch;
 
             tempList.add(user1);
@@ -68,17 +73,18 @@ public class AnalyzePostTimeWithHourofDay {
      * @param timeVector
      * @return
      */
-    public static double[] returnNormalizedTimeVector(double[] timeVector) {
-        double sumB = 0;
-
+    public double[] returnNormalizedTimeVector(int[] timeVector) {
+        double sumB = 0.0;
+        double[] normalizedTimeVector = new double[24];
         for (int index = 0; index < timeVector.length; index++) {
             sumB = sumB + timeVector[index];
         }
 
         for (int index = 0; index < timeVector.length; index++) {
-            timeVector[index] = timeVector[index] / sumB;
+            double temp = timeVector[index] / sumB;
+            normalizedTimeVector[index] = temp;
         }
-        return timeVector;
+        return normalizedTimeVector;
     }
 
     /**

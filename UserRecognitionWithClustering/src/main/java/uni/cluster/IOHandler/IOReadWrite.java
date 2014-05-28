@@ -445,7 +445,7 @@ public class IOReadWrite {
                             directoryList1.toString(), allFilesSize1.toString(), IOProperties.USER_FILE_EXTENSION);
                     /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                      allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
-                    if (user.getUserPost().size() >= 400) {
+                    if (user.getUserPost().size() >= 1) {
                         allFiles.add(user);
                     }
                 }
@@ -888,58 +888,40 @@ public class IOReadWrite {
         return aliasList;
     }
 
-    public List<Alias> convertTxtFileToAliasObjAndDivideForTimeFeat(int divisionFlag, String basePath, String directoryName,
-            String fileName, String extension, List<Alias> aliasList) throws FileNotFoundException, IOException {
-        String userPostAsString = readTxtFileAsString(basePath, directoryName, fileName, extension);
-        String temp[] = null;
-        Alias aliasA = new Alias();
-        Alias aliasB = new Alias();
-        List<String> dateListA = new ArrayList<>();
-        List<String> timeListA = new ArrayList<>();
-        List<String> dateListB = new ArrayList<>();
-        List<String> timeListB = new ArrayList<>();
-        aliasA.setUserID(fileName);
-        aliasB.setUserID(fileName);
-        aliasA.setType("A");
-        aliasB.setType("B");
-        if (userPostAsString.contains(IOProperties.DATA_SEPERATOR)) {
-            temp = userPostAsString.split(IOProperties.DATA_SEPERATOR);
-        } else {
-            temp = new String[1];
-            temp[0] = userPostAsString;
+    public List<User> returnDividedUserForTimeFeat(int divisionFlag, List<User> usersList, User user) throws FileNotFoundException, IOException {
+        int UserID = user.getId();
+        User userA = new User();
+        User userB = new User();
+        List<Posts> postListA = new ArrayList<>();
+        List<Posts> postListB = new ArrayList<>();
 
-        }
-        for (int i = 0; i < temp.length; i++) {
-            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
-                    || temp[i].length() == 8) {
-                temp[i] = temp[i] + "  ";
-            }
-            String time = temp[i].substring(0, 8);
-            String date = temp[i].substring(9, 19);
-            if (time.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
-                if (i % 2 == 0 && divisionFlag == 2) {
-                    timeListA.add(time);
-                    dateListA.add(date);
-                } else if (i % 2 != 0) {
-                    timeListB.add(time);
-                    dateListB.add(date);
-                }
+        List userPost = user.getUserPost();
+        int userPostSize = user.getUserPost().size();
+
+        for (int i = 0; i < userPostSize; i++) {
+            Posts individualPost = (Posts) userPost.get(i);
+
+            if (i % 2 == 0 && divisionFlag == 2) {
+                postListA.add(individualPost);
+            } else if (i % 2 != 0) {
+                postListB.add(individualPost);
             } else {
                 continue;
             }
         }
 
         if (divisionFlag == 2) {
-            aliasA.setPostTime(timeListA);
-            aliasA.setPostDate(dateListA);
-            aliasList.add(0, aliasA);
+            userA.setId(UserID);
+            userA.setType("A");
+            userA.setUserPost(postListA);
+            usersList.add(0, userA);
         }
+        userB.setId(UserID);
+        userB.setType("B");
+        userB.setUserPost(postListB);
+        usersList.add(userB);
 
-        aliasB.setPostTime(timeListB);
-        aliasB.setPostDate(dateListB);
-        aliasList.add(aliasB);
-
-        return aliasList;
+        return usersList;
     }
 
     public Alias convertTxtFileToAliasObjAndDivide(String basePath, String directoryName,
