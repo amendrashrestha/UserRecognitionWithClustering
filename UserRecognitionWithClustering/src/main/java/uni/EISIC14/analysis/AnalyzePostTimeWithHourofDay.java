@@ -39,8 +39,8 @@ public class AnalyzePostTimeWithHourofDay {
             List tempList = new ArrayList();
             User mainUser = aliases.get(0);
             User otherUsers = aliases.get(i);
-            String user1 = Integer.toString(mainUser.getId());
-            String user2 = Integer.toString(otherUsers.getId());
+            int user1 = mainUser.getId();
+            int user2 = otherUsers.getId();
 
             /**
              * calculating time vector for alias
@@ -123,7 +123,7 @@ public class AnalyzePostTimeWithHourofDay {
                 return firstNumber.compareTo(secondNumber);
             }
         });
-        System.out.println("After sorting: " + tempTimeinfo);
+        //System.out.println("After sorting: " + tempTimeinfo);
         createRank(tempTimeinfo);
     }
 
