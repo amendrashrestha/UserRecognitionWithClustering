@@ -17,6 +17,11 @@ import java.io.IOException;
 public class NewTest {
 
     public static void main(String args[]) throws IOException {
+        
+        double temp;
+        temp = (double) 22 / 7;
+        System.out.println("Temp: " + temp);
+        
         int[] vector = new int[]{9,9,14,8,21,20};
         int sum = returnTotalSum(vector);
         System.out.println("Sum: " + sum);
@@ -25,7 +30,7 @@ public class NewTest {
             System.out.println(i);
         }
         String fileName = System.getProperty("user.home") + "/Desktop/TimeFeatureVectorwithSplitTest1.arff";
-        createFile(fileName);
+        //createFile(fileName);
         
     }
 

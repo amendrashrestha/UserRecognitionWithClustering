@@ -13,7 +13,7 @@ import uni.cluster.parser.model.User;
  *
  * @author ITE
  */
-public class AnalyzeTime {
+public class AnalyzeHourofDay {
 
     public void executeAnalysis() throws FileNotFoundException, IOException, SQLException {
 
@@ -21,7 +21,7 @@ public class AnalyzeTime {
         List<User> userList = ioReadWrite.getAllUsersAsObject();
 
         //For passing limited number of sorted users  
-        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(userList, 900);
+        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(userList, 100);
         List<User> splitUsersList;
         int divisionTimes;
 

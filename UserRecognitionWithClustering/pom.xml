@@ -19,7 +19,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uni.EISIC14.main.AnalyzingUsersMain</mainClass>
+                            <mainClass>uni.EISIC14.main.AnalyzingTimeFeatureMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -29,7 +29,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uni.EISIC14.main.AnalyzingUsersMain</mainClass>
+                            <mainClass>uni.EISIC14.main.AnalyzingTimeFeatureMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

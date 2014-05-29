@@ -39,13 +39,13 @@ public class AnalyzePostTimeWithHourofDay {
             List tempList = new ArrayList();
             User mainUser = aliases.get(0);
             User otherUsers = aliases.get(i);
-            String user1 = Integer.toString(mainUser.getId());
-            String user2 = Integer.toString(otherUsers.getId());
+            int user1 = mainUser.getId();
+            int user2 = otherUsers.getId();
 
             /**
              * calculating time vector for alias
              */
-            double timeMatch = 0.0;
+            double timeMatch;
             mainUser.setCategorizedHourOfDayToUser(mainUser);
             otherUsers.setCategorizedHourOfDayToUser(otherUsers);
 
@@ -55,12 +55,11 @@ public class AnalyzePostTimeWithHourofDay {
             double[] normUser1timeVector = returnNormalizedTimeVector(user1timeVector);
             double[] normUser2timeVector = returnNormalizedTimeVector(user2timeVector);
 
-            timeMatch = calculateManhattanTimeVector(normUser1timeVector, normUser2timeVector);
-            float time = (float) timeMatch;
+            timeMatch = calculateManhattanDistance(normUser1timeVector, normUser2timeVector);
 
             tempList.add(user1);
             tempList.add(user2);
-            tempList.add(time);
+            tempList.add(timeMatch);
             tempDisplayInfo.add(tempList);
         }
         getsortedTime(tempDisplayInfo);
@@ -94,7 +93,7 @@ public class AnalyzePostTimeWithHourofDay {
      * @param sequence2
      * @return
      */
-    public static double calculateManhattanTimeVector(double[] sequence1, double[] sequence2) {
+    public double calculateManhattanDistance(double[] sequence1, double[] sequence2) {
         double manhattanDistance = 0.0;
         for (int i = 0; i < sequence1.length; i++) {
             double firstElementsequence1 = sequence1[i];
@@ -123,7 +122,7 @@ public class AnalyzePostTimeWithHourofDay {
                 return firstNumber.compareTo(secondNumber);
             }
         });
-        System.out.println("After sorting: " + tempTimeinfo);
+        //System.out.println("After sorting: " + tempTimeinfo);
         createRank(tempTimeinfo);
     }
 

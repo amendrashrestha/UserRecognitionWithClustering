@@ -7,7 +7,7 @@ package uni.EISIC14.main;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import uni.EISIC14.analysis.AnalyzeTime;
+import uni.EISIC14.analysis.AnalyzeHourofDay;
 
 
 
@@ -15,10 +15,10 @@ import uni.EISIC14.analysis.AnalyzeTime;
  *
  * @author ITE
  */
-public class AnalyzingUsersMain {
+public class AnalyzingHourofDayMain {
 
     public static void main(String args[]) throws FileNotFoundException, IOException, SQLException {
-        AnalyzeTime init = new AnalyzeTime();
+        AnalyzeHourofDay init = new AnalyzeHourofDay();
         init.executeAnalysis();
     }
 }

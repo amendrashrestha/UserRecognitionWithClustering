@@ -445,7 +445,7 @@ public class IOReadWrite {
                             directoryList1.toString(), allFilesSize1.toString(), IOProperties.USER_FILE_EXTENSION);
                     /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                      allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
-                    if (user.getUserPost().size() >= 1) {
+                    if (user.getUserPost().size() >= 2) {
                         allFiles.add(user);
                     }
                 }

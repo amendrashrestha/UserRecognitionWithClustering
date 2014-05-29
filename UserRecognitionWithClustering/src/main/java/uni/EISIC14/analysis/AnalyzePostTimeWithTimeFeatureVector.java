@@ -1,6 +1,7 @@
 package uni.EISIC14.analysis;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,7 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import uni.cluster.parser.model.Alias;
+import org.apache.commons.lang.ArrayUtils;
+import uni.cluster.parser.model.User;
 
 /**
  *
@@ -17,7 +19,7 @@ import uni.cluster.parser.model.Alias;
  */
 public class AnalyzePostTimeWithTimeFeatureVector {
 
-    public List<Alias> aliases; // The aliases we are interested in to compare
+    public List<User> aliases; // The aliases we are interested in to compare
     List tempDisplayInfo;
     List<Integer> rank = new ArrayList<>();
     int rankArray[] = {0, 0, 0, 0};
@@ -26,36 +28,66 @@ public class AnalyzePostTimeWithTimeFeatureVector {
     static HashMap<Integer, HashSet<Integer>> userResult = new HashMap<>();
     Set userBin = new HashSet();
 
-    void executePostCompare(List<Alias> aliasList) throws SQLException {
+    void executePostCompare(List<User> aliasList) throws SQLException, ParseException {
         this.aliases = aliasList;
         compareAllPairsOfAliases();
         displayUserRank();
     }
 
-    public void compareAllPairsOfAliases() throws SQLException {
+    public void compareAllPairsOfAliases() throws SQLException, ParseException {
         tempDisplayInfo = new ArrayList<>();
 
         for (int i = 1; i < aliases.size(); i++) {
             List tempList = new ArrayList();
-            String user1 = aliases.get(0).getUser();
-            String user2 = aliases.get(i).getUser();
+            User mainUser = aliases.get(0);
+            User otherUsers = aliases.get(i);
+            int user1 = mainUser.getId();
+            int user2 = otherUsers.getId();
 
             /**
              * calculating time vector for alias
              */
-            double timeMatch = 0.0;
-            double[] user1timeVector = aliases.get(0).getTimeVector();
-            double[] user2timeVector = aliases.get(i).getTimeVector();
+            double timeMatch;
 
-            user1timeVector = returnNormalizedTimeVector(user1timeVector);
-            user2timeVector = returnNormalizedTimeVector(user2timeVector);
+            mainUser.setCategorizedTimeToUser(mainUser); //Number of messages in 6 hour interval of a day
+            mainUser.setCategorizedDayToUser(mainUser); //Number of messages in 7 days of week
+            mainUser.setCategorizedMonthToUser(mainUser); //Number of messages in 12 months of year
 
-            timeMatch = calculateManhattanTimeVector(user1timeVector, user2timeVector);
-            float time = (float) timeMatch;
+            int[] mainUsertimeOfInterval = mainUser.getClassifiedTimeVector();
+            int[] mainUsermonthOfYear = mainUser.getClassifiedMonthVector();
+            int[] mainUserdayOfWeek = mainUser.getClassifiedDayVector();
+
+            otherUsers.setCategorizedTimeToUser(otherUsers); //Number of messages in 6 hour interval of a day
+            otherUsers.setCategorizedDayToUser(otherUsers); //Number of messages in 7 days of week
+            otherUsers.setCategorizedMonthToUser(otherUsers); //Number of messages in 12 months of year
+
+            int[] otherUsertimeOfInterval = otherUsers.getClassifiedTimeVector();
+            int[] otherUsermonthOfYear = otherUsers.getClassifiedMonthVector();
+            int[] otherUserdayOfWeek = otherUsers.getClassifiedDayVector();
+
+            int mainUserTotalPost = returnTotalSum(mainUsertimeOfInterval);
+            int otherUserTotalPost = returnTotalSum(otherUsertimeOfInterval);
+
+            double[] normMainUsertimeOfInterval = returnNormalizedTimeVector(mainUsertimeOfInterval, mainUserTotalPost);
+            double[] normMainUsermonthOfYear = returnNormalizedTimeVector(mainUsermonthOfYear, mainUserTotalPost);
+            double[] normMainUserdayOfWeek = returnNormalizedTimeVector(mainUserdayOfWeek, mainUserTotalPost);
+
+            double[] normOtherUsertimeOfInterval = returnNormalizedTimeVector(otherUsertimeOfInterval, otherUserTotalPost);
+            double[] normOtherUsermonthOfYear = returnNormalizedTimeVector(otherUsermonthOfYear, otherUserTotalPost);
+            double[] normOtherUserdayOfWeek = returnNormalizedTimeVector(otherUserdayOfWeek, otherUserTotalPost);
+
+            double[] mainUsercombined1 = ArrayUtils.addAll(normMainUsertimeOfInterval, normMainUsermonthOfYear);
+            double[] mainUsercombined2 = ArrayUtils.addAll(mainUsercombined1, normMainUserdayOfWeek);
+
+            double[] normUsercombined1 = ArrayUtils.addAll(normOtherUsertimeOfInterval, normOtherUsermonthOfYear);
+            double[] normUsercombined2 = ArrayUtils.addAll(normUsercombined1, normOtherUserdayOfWeek);
+
+//            timeMatch = calculateManhattanDistance(mainUsercombined2, normUsercombined2);
+            timeMatch = calculateManhattanDistance(normMainUsertimeOfInterval, normOtherUsertimeOfInterval);
 
             tempList.add(user1);
             tempList.add(user2);
-            tempList.add(time);
+            tempList.add(timeMatch);
             tempDisplayInfo.add(tempList);
         }
         getsortedTime(tempDisplayInfo);
@@ -63,22 +95,37 @@ public class AnalyzePostTimeWithTimeFeatureVector {
     }
 
     /**
-     * return normalized time vector with respect to total number of post
+     * return total count of posts
      *
      * @param timeVector
      * @return
      */
-    public static double[] returnNormalizedTimeVector(double[] timeVector) {
-        double sumB = 0;
+    private int returnTotalSum(int[] timeVector) {
+        int sum = 0;
 
         for (int index = 0; index < timeVector.length; index++) {
-            sumB = sumB + timeVector[index];
+            sum = sum + timeVector[index];
         }
+        return sum;
+    }
 
-        for (int index = 0; index < timeVector.length; index++) {
-            timeVector[index] = timeVector[index] / sumB;
+    /**
+     * return normalized time vector with respect to total number of post
+     *
+     * @param timeVector
+     * @param sum
+     * @return
+     */
+    public double[] returnNormalizedTimeVector(int[] timeVector, int sum) {
+
+        int vectorSize = timeVector.length;
+        double[] normalizedTimeVector = new double[vectorSize];
+        
+        for (int index = 0; index < vectorSize; index++) {
+            double temp = (double) timeVector[index] / sum;
+            normalizedTimeVector[index] = temp;
         }
-        return timeVector;
+        return normalizedTimeVector;
     }
 
     /**
@@ -88,7 +135,7 @@ public class AnalyzePostTimeWithTimeFeatureVector {
      * @param sequence2
      * @return
      */
-    public static double calculateManhattanTimeVector(double[] sequence1, double[] sequence2) {
+    public double calculateManhattanDistance(double[] sequence1, double[] sequence2) {
         double manhattanDistance = 0.0;
         for (int i = 0; i < sequence1.length; i++) {
             double firstElementsequence1 = sequence1[i];
@@ -117,7 +164,7 @@ public class AnalyzePostTimeWithTimeFeatureVector {
                 return firstNumber.compareTo(secondNumber);
             }
         });
-        System.out.println("After sorting: " + tempTimeinfo);
+        //System.out.println("After sorting: " + tempTimeinfo);
         createRank(tempTimeinfo);
     }
 

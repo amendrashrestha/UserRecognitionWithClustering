@@ -23,6 +23,8 @@ public class ReturnSortedUserList implements Comparator<User> {
     public int compare(User first, User second) {
         int firstUseID = first.getUserPost().size();
         int secondUseID = second.getUserPost().size();
+//        int firstUseID = first.getId();
+//        int secondUseID = second.getId();
         return Integer.compare(secondUseID,firstUseID);
     }
     
