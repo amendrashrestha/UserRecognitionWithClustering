@@ -39,7 +39,7 @@ public class CreateUserTimeProfile {
         String fileName = System.getProperty("user.home") + "/Desktop/ExperimentTest/TimeFeatureVectorwithSplitTest1000.arff";
         List<User> UserList = ioReadWrite.getAllUsersAsObject();
         List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(UserList, 1);
-        List<User> SplittedUsers = divideUser.divideUsers(tempUsers);
+        List<User> SplittedUsers = divideUser.divideUsersintoFive(tempUsers);
         createFile(fileName);
 
         for (User user1 : SplittedUsers) {
@@ -151,7 +151,9 @@ public class CreateUserTimeProfile {
     private int[] returnNormalizedVector(int[] timeVector, int sum) {
 
         for (int index = 0; index < timeVector.length; index++) {
-            int temp = (int) (((timeVector[index] * 100) / sum) + 0.5);
+            double time = timeVector[index];
+            double perc = (double) (time / sum);
+            int temp = (int) ((perc * 100) + 0.5);
             timeVector[index] = temp;
         }
         return timeVector;

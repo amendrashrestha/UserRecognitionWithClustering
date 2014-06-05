@@ -27,7 +27,7 @@ public class AnalyzeTimeFeature {
         List<User> userList = ioReadWrite.getAllUsersAsObject();
 
         //For passing limited number of sorted users  
-        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(userList, 1000);
+        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(userList, 900);
         List<User> splitUsersList;
         int divisionTimes;
 

@@ -55,7 +55,8 @@ public class AnalyzePostTimeWithHourofDay {
             double[] normUser1timeVector = returnNormalizedTimeVector(user1timeVector);
             double[] normUser2timeVector = returnNormalizedTimeVector(user2timeVector);
 
-            timeMatch = calculateManhattanDistance(normUser1timeVector, normUser2timeVector);
+//            timeMatch = calculateManhattanDistance(normUser1timeVector, normUser2timeVector);
+            timeMatch = calculateEuclideanDistance(normUser1timeVector, normUser2timeVector);
 
             tempList.add(user1);
             tempList.add(user2);
@@ -85,6 +86,18 @@ public class AnalyzePostTimeWithHourofDay {
         }
         return normalizedTimeVector;
     }
+    
+     public double calculateEuclideanDistance(double[] sequence1, double[] sequence2) {
+
+        double sum = 0.0;
+        for (int i = 0; i < sequence1.length; i++) {
+            double firstElementsequence1 = sequence1[i];
+            double firstElementsequence2 = sequence2[i];
+            sum = sum + Math.pow(firstElementsequence2 - firstElementsequence1, 2);
+        }
+        return Math.sqrt(sum);
+    }
+
 
     /**
      * Calculate Manhattan distance between two users

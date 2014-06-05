@@ -3,6 +3,7 @@ package uni.EISIC14.analysis;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -65,8 +66,8 @@ public class AnalyzePostTimeWithTimeFeatureVector {
             int[] otherUsermonthOfYear = otherUsers.getClassifiedMonthVector();
             int[] otherUserdayOfWeek = otherUsers.getClassifiedDayVector();
 
-            int mainUserTotalPost = returnTotalSum(mainUsertimeOfInterval);
-            int otherUserTotalPost = returnTotalSum(otherUsertimeOfInterval);
+            int mainUserTotalPost = returnTotalSum(mainUsermonthOfYear);
+            int otherUserTotalPost = returnTotalSum(otherUsermonthOfYear);
 
             double[] normMainUsertimeOfInterval = returnNormalizedTimeVector(mainUsertimeOfInterval, mainUserTotalPost);
             double[] normMainUsermonthOfYear = returnNormalizedTimeVector(mainUsermonthOfYear, mainUserTotalPost);
@@ -74,16 +75,18 @@ public class AnalyzePostTimeWithTimeFeatureVector {
 
             double[] normOtherUsertimeOfInterval = returnNormalizedTimeVector(otherUsertimeOfInterval, otherUserTotalPost);
             double[] normOtherUsermonthOfYear = returnNormalizedTimeVector(otherUsermonthOfYear, otherUserTotalPost);
-            double[] normOtherUserdayOfWeek = returnNormalizedTimeVector(otherUserdayOfWeek, otherUserTotalPost);
+             double[] normOtherUserdayOfWeek = returnNormalizedTimeVector(otherUserdayOfWeek, otherUserTotalPost);
 
             double[] mainUsercombined1 = ArrayUtils.addAll(normMainUsertimeOfInterval, normMainUsermonthOfYear);
-            double[] mainUsercombined2 = ArrayUtils.addAll(mainUsercombined1, normMainUserdayOfWeek);
+              double[] mainUsercombined2 = ArrayUtils.addAll(mainUsercombined1, normMainUserdayOfWeek);
 
             double[] normUsercombined1 = ArrayUtils.addAll(normOtherUsertimeOfInterval, normOtherUsermonthOfYear);
-            double[] normUsercombined2 = ArrayUtils.addAll(normUsercombined1, normOtherUserdayOfWeek);
+             double[] normUsercombined2 = ArrayUtils.addAll(normUsercombined1, normOtherUserdayOfWeek);
+//             System.out.println("Second User: " + Arrays.toString(normUsercombined2));
+//             System.out.println("Main User: " + Arrays.toString(mainUsercombined2));
 
-//            timeMatch = calculateManhattanDistance(mainUsercombined2, normUsercombined2);
-            timeMatch = calculateManhattanDistance(normMainUsertimeOfInterval, normOtherUsertimeOfInterval);
+//            timeMatch = calculateManhattanDistance(mainUsercombined1, normUsercombined1);
+            timeMatch = calculateManhattanDistance(mainUsercombined2, normUsercombined2);
 
             tempList.add(user1);
             tempList.add(user2);
@@ -120,7 +123,7 @@ public class AnalyzePostTimeWithTimeFeatureVector {
 
         int vectorSize = timeVector.length;
         double[] normalizedTimeVector = new double[vectorSize];
-        
+
         for (int index = 0; index < vectorSize; index++) {
             double temp = (double) timeVector[index] / sum;
             normalizedTimeVector[index] = temp;
@@ -139,8 +142,12 @@ public class AnalyzePostTimeWithTimeFeatureVector {
         double manhattanDistance = 0.0;
         for (int i = 0; i < sequence1.length; i++) {
             double firstElementsequence1 = sequence1[i];
+            System.out.println("First " + firstElementsequence1);
             double firstElementsequence2 = sequence2[i];
+            System.out.println("Second " + firstElementsequence2);
             manhattanDistance = manhattanDistance + Math.abs(firstElementsequence2 - firstElementsequence1);
+            System.out.println("Manha: " + manhattanDistance);
+            System.out.println("---------");
         }
         return manhattanDistance;
     }

@@ -19,7 +19,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uni.EISIC14.main.AnalyzingTimeFeatureMain</mainClass>
+                            <mainClass>uni.cluster.main.CombineFilesMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -29,7 +29,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uni.EISIC14.main.AnalyzingTimeFeatureMain</mainClass>
+                            <mainClass>uni.cluster.main.CombineFilesMain</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

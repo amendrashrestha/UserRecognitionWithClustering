@@ -21,7 +21,7 @@ public class IOProperties {
     public static final String INDIVIDUAL_USER_FILE_PATH = System.getProperty("user.home") + "/Downloads/BoardDataSet/2007/UsersPostTime/";
 //    public static final String INDIVIDUAL_USER_FILE_PATH = System.getProperty("user.home") + "/Downloads/WekaTestData/UsersPostTime/";
     
-    public static final String All_YEAR_FILES_BASE_PATH = System.getProperty("user.home") + "/Downloads/2003/UsersPostTime/";
+    public static final String All_YEAR_FILES_BASE_PATH = System.getProperty("user.home") + "/Downloads/BoardDataSet/0607User/UsersPostTime/";
     public static final String CLUSTER_FOLDER_NAME = "Cluster Data";
     public static final String FEATURE_VECTOR_FOLDER_NAME = "Feature Vector";
     /**

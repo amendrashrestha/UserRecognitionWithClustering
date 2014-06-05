@@ -9,6 +9,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -18,9 +21,29 @@ public class NewTest {
 
     public static void main(String args[]) throws IOException {
         
+        List<int[]> users = new ArrayList();
+        int[] user1 = {5,4,3,2,1,6};
+        int[] user2 = {5,4,3,2,1,6};
+        
+        users.add(user1);
+        users.add(user1);
+        
+        for(int[] user : users){
+            System.out.println("First Index: " + user[0]); 
+            int firstUser = user[0];
+            //if()
+            System.out.println("users: " + Arrays.toString(user));
+        }
+        
+        
+        
         double temp;
-        temp = (double) 22 / 7;
+        int a = 22;
+        int b = 27;
+        temp = (double) a / b;
+        int test = (int) (temp + 0.5);
         System.out.println("Temp: " + temp);
+        System.out.println("Temp: " + test);
         
         int[] vector = new int[]{9,9,14,8,21,20};
         int sum = returnTotalSum(vector);
@@ -37,7 +60,9 @@ public class NewTest {
     private static int[] returnNormalizedVector(int[] timeVector, int sum) {
 
         for (int index = 0; index < timeVector.length; index++) {
-            int temp = (int) ((timeVector[index] * 100) / sum + 0.5);
+            double time = timeVector[index];
+            double perc = (double) (time / sum);
+            int temp = (int) ((perc * 100) + 0.5);
             timeVector[index] = temp;
         }
         return timeVector;

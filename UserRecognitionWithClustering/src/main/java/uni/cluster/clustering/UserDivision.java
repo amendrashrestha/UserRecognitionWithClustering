@@ -1,5 +1,6 @@
 package uni.cluster.clustering;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import uni.cluster.parser.model.Posts;
@@ -47,13 +48,14 @@ public class UserDivision {
     }
 
     /**
+     * @throws java.text.ParseException
      * @Desc This function divides all the user into two users as A, B, C D, E
      * where (user:A + user:B + user:C + user:D + user:E) = total number of
      * posts of the original (user:U)
      * @param userList
      * @return List<User>
      */
-    public List<User> divideUsers(List<User> userList) {
+    public List<User> divideUsersintoFive(List<User> userList) throws ParseException {
         List finalList = new ArrayList();
         for (User userList1 : userList) {
             User user = (User) userList1;
@@ -63,22 +65,24 @@ public class UserDivision {
             List fourthPostList = new ArrayList();
             List fifthPostList = new ArrayList();
             List postList = user.getUserPost();
-            int equalPostSize = 445;
+            //int equalPostSize = 445;
 
-            for (int j = 0; j < equalPostSize; j++) {
+            for (int j = 0; j < postList.size(); j++) {
+                Posts userPost = (Posts) postList.get(j);
                 int k = j % 5;
                 if (k == 0) {
-                    firstPostList.add((Posts) postList.get(j));
+                    firstPostList.add(userPost);
                 } else if (k == 1) {
-                    secondPostList.add((Posts) postList.get(j));
+                    secondPostList.add(userPost);
                 } else if (k == 2) {
-                    thirdPostList.add((Posts) postList.get(j));
+                    thirdPostList.add(userPost);
                 } else if (k == 3) {
-                    fourthPostList.add((Posts) postList.get(j));
+                    fourthPostList.add(userPost);
                 } else if (k == 4) {
-                    fifthPostList.add((Posts) postList.get(j));
+                    fifthPostList.add(userPost);
                 }
             }
+            
             User userA = new User();
             User userB = new User();
             User userC = new User();
@@ -140,7 +144,7 @@ public class UserDivision {
 
     /**
      * @param index
-     * @return 
+     * @return
      * @Desc This function divides the first user into two users as A and B
      * where (user:A + user:B) = total number of posts of the original (user:U).
      * Rest of the other users contain only half of the original post whereas
@@ -218,5 +222,4 @@ public class UserDivision {
      }
      return finalList;
      }*/
-
 }

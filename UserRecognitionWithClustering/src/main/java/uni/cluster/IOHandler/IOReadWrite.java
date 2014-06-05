@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -89,17 +90,13 @@ public class IOReadWrite {
             }
         } catch (IOException e) {
         } finally {
-            if (newFileReader != null) {
                 try {
                     newFileReader.close();
                 } catch (IOException e) {
-                }
             }
-            if (newFileWriter != null) {
                 try {
                     newFileWriter.close();
                 } catch (IOException e) {
-                }
             }
         }
     }
@@ -126,6 +123,15 @@ public class IOReadWrite {
         } catch (IOException ex) {
             Logger.getLogger(IOReadWrite.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void deleteFile(String fileName) {
+        String getUserFolderName = getFolderName(fileName);
+        String newUserFileName = fileName + IOProperties.USER_FILE_EXTENSION;
+        String existingUserFileLocation = IOProperties.All_YEAR_FILES_BASE_PATH + getUserFolderName;
+        String existingUserFilePath = existingUserFileLocation + "/" + newUserFileName;
+        File file = new File(existingUserFilePath);
+        file.delete();
     }
 
     /*
@@ -323,6 +329,48 @@ public class IOReadWrite {
         return user;
     }
 
+    public User convertTxtFileToUserObjSixMonthData(String basePath, String directoryName, String fileName, String extension) throws FileNotFoundException, IOException {
+        String userPostAsString = readTxtFileAsString(basePath, directoryName, fileName, extension);
+        String temp[];
+        User user = new User();
+        List postList = new ArrayList();
+        user.setId(Integer.valueOf(fileName));
+        if (userPostAsString.contains(IOProperties.DATA_SEPERATOR)) {
+            temp = userPostAsString.split(IOProperties.DATA_SEPERATOR);
+        } else {
+            temp = new String[1];
+            temp[0] = userPostAsString;
+
+        }
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i].matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")
+                    || temp[i].length() == 8) {
+                temp[i] = temp[i] + "  ";
+            }
+            Posts posts = new Posts();
+            String time = temp[i].substring(0, 8);
+            String date = temp[i].substring(9, 19);
+            if (time.matches("[0-9]{2}:[0-9]{2}:[0-9]{2}")) {
+                String[] tempMonth = date.split("-");
+                String month = tempMonth[1];
+                int monthOfYear = Integer.parseInt(month);
+
+                if (monthOfYear <= 6) {
+                    posts.setTime(time);
+                    posts.setDate(date);
+//                posts.setContent(temp[i].substring(20, temp[i].length()));
+                    postList.add(posts);
+                }
+                //System.out.println(date);
+            } else {
+                continue;
+
+            }
+        }
+        user.setUserPost(postList);
+        return user;
+    }
+
     public User convertDocumentToObj(int userID, String post, String seperator) throws FileNotFoundException, IOException {
         String temp[] = null;
         User user = new User();
@@ -442,10 +490,12 @@ public class IOReadWrite {
                     dsFile.delete();
                 } else {
                     User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
-                            directoryList1.toString(), allFilesSize1.toString(), IOProperties.USER_FILE_EXTENSION);
-                    /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
+                     directoryList1.toString(), allFilesSize1.toString(), IOProperties.USER_FILE_EXTENSION);
+                     /*User user = ioRW.convertTxtFileToUserObj(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                      allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
-                    if (user.getUserPost().size() >= 2) {
+                    /*User user = ioRW.convertTxtFileToUserObjSixMonthData(IOProperties.INDIVIDUAL_USER_FILE_PATH,
+                            directoryList1.toString(), allFilesSize1.toString(), IOProperties.USER_FILE_EXTENSION);*/
+                    if (user.getUserPost().size() >= 1) {
                         allFiles.add(user);
                     }
                 }

@@ -4,6 +4,7 @@
  */
 package uni.post.parser.controller;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
@@ -25,10 +26,24 @@ public class CopyFileContent {
         Collections.sort(newUserDirectory, new ComparatorImpl());
         List combinedUserDirectory = io.getAllDirectories(IOProperties.All_YEAR_FILES_BASE_PATH);
         Collections.sort(combinedUserDirectory, new ComparatorImpl());
-        
+
         for (int i = 0; i < newUserDirectory.size(); i++) {
-            List newUsers = io.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + "/" + newUserDirectory.get(i).toString());
-            List combinedUsers = io.getAllFilesInADirectory(IOProperties.All_YEAR_FILES_BASE_PATH + "/" + combinedUserDirectory.get(i).toString());
+            List<File> newUsers = io.getAllFilesInADirectory(IOProperties.INDIVIDUAL_USER_FILE_PATH + "/" + newUserDirectory.get(i).toString());
+            List<File> combinedUsers = io.getAllFilesInADirectory(IOProperties.All_YEAR_FILES_BASE_PATH + "/" + combinedUserDirectory.get(i).toString());
+
+            /*for (Object file : newUsers) {
+                if (file.toString().contains(".DS_S")) {
+                    newUsers.remove(0);
+                    break;
+                }
+            }
+            for (Object file : combinedUsers) {
+                if (file.toString().contains(".DS_S")) {
+                    combinedUsers.remove(0);
+                    break;
+                }
+            }*/
+
             System.out.println("NU:" + newUsers);
             System.out.println("OU:" + combinedUsers);
 
@@ -44,14 +59,22 @@ public class CopyFileContent {
                         System.out.println("Matched Users :" + oldUser);
                         break;
                     }
+                    /**
+                     * remove the users if it doesn't exist on both folders
+                     */
+                    /*if (!newUsers.contains(oldUser)) {
+                        System.out.println("New User: " + oldUser);
+                        io.deleteFile(oldUser);
+                    }*/
                 }
+
                 /**
                  * add the new users if it doesn't exist
                  */
-                if (!combinedUsers.contains(newUser)) {
-                    System.out.println("New User: " + newUser);
-                    io.copyFile(newUser);
-                }
+                /*if (!combinedUsers.contains(newUser)) {
+                 System.out.println("New User: " + newUser);
+                 io.copyFile(newUser);
+                 }*/
                 System.out.println("-----------------");
             }
             System.out.println("Total Users:" + combinedUsers);

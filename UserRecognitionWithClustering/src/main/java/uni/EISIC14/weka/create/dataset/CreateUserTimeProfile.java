@@ -36,15 +36,15 @@ public class CreateUserTimeProfile {
         IOReadWrite ioReadWrite = new IOReadWrite();
         UserDivision divideUser = new UserDivision();
 
-        String fileName = System.getProperty("user.home") + "/Desktop/ExperimentTest/TimeFeatureVectorwithSplitTest1000.arff";
+        String fileName = System.getProperty("user.home") + "/Desktop/TimeFeatureVectorTest.arff";
         List<User> UserList = ioReadWrite.getAllUsersAsObject();
-        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(UserList, 1);
-        List<User> SplittedUsers = divideUser.divideUsers(tempUsers);
+        List<User> tempUsers = ioReadWrite.returnLimitedSortedUser(UserList, 5);
+        List<User> SplittedUsers = divideUser.divideUsersintoFive(tempUsers);
         createFile(fileName);
 
         for (User user1 : SplittedUsers) {
-            try (
-                    CSVWriter writer = new CSVWriter(new FileWriter(fileName, true), ',')) {
+           try (
+                 CSVWriter writer = new CSVWriter(new FileWriter(fileName, true), ',')) {
 
                 String[] featureVectorList;
 
@@ -78,38 +78,13 @@ public class CreateUserTimeProfile {
                 int[] combined3 = ArrayUtils.addAll(combined2, dayOfWeek);
                 int[] combined4 = ArrayUtils.addAll(combined3, typeOfWeek);
 
-//                featureVectorList = Arrays.toString(combined4).split("[\\[\\]]")[1].split(", ");
                 featureVectorList = Arrays.toString(combined4).split("[\\[\\]]")[1].split(", ");
 
                 System.out.println("Features: " + Arrays.toString(featureVectorList));
-
-                //            System.out.println("Hour Of Day: " + Arrays.toString(hourOfDay));
-                //            System.out.println("Interal Of Day: " + Arrays.toString(timeOfInterval));
-                //            System.out.println("Month Of Year: " + Arrays.toString(monthOfYear));
-                //            System.out.println("Days Of Week: " + Arrays.toString(dayOfWeek));
-                //            System.out.println("Type Of Week: " + Arrays.toString(typeOfWeek));
                 writer.writeNext(featureVectorList);
 
-            }
+           }
             System.out.println("*************");
-
-            /*System.out.println("User_" + user1.getId());
-             int[] dayOfMonth = user1.getClassifiedDayOfMonthVector();
-             System.out.println("Day Of Month");
-             for(int i : dayOfMonth){
-             System.out.println(i);
-             }
-             System.out.println("Day Of Week");
-             int[] day = user1.getClassifiedDayVector();
-             for(int i : day){
-             System.out.println(i);
-             }
-             System.out.println("Month Of Year");
-             int[] month = user1.getClassifiedMonthVector();
-             for(int i : month){
-             System.out.println(i);
-             }
-             System.out.println("**************");*/
         }
     }
 
@@ -149,9 +124,10 @@ public class CreateUserTimeProfile {
      * @return
      */
     private int[] returnNormalizedVector(int[] timeVector, int sum) {
-
         for (int index = 0; index < timeVector.length; index++) {
-            int temp = (int) (((timeVector[index] * 100) / sum) + 0.5);
+            double time = timeVector[index];
+            double perc = (double) (time / sum);
+            int temp = (int) ((perc * 100) + 0.5);
             timeVector[index] = temp;
         }
         return timeVector;

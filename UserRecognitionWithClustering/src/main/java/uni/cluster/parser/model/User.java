@@ -42,6 +42,8 @@ public class User {
      * defined in class "com.post.parser.clustering.FirstActivityCluster"
      */
     private int[] classifiedMonthVector;
+    
+    private int[] classifiedSixMonthDataVector;
     /*
      * This variable contains the total number of posts, posted in an individual month,
      * The information about the avaiable day frame can be viewed on method "timeCategoryDefinition()" 
@@ -94,6 +96,7 @@ public class User {
         this.classifiedHourOfDayVector = new int[24];
         this.classifiedDayOfMonthVector = new int[31];
         this.classifiedTypeOfWeekVector = new int[2];
+        this.classifiedSixMonthDataVector = new int[6];
     }
 
     /*public User(int[] classifiedTimeVector, int[] classifiedDayVector, int[] classifiedMonthVector, 
@@ -422,6 +425,28 @@ public class User {
         }
         return userList;
     }
+    /**
+     * @param userList
+     * @return
+     * @throws java.text.ParseException
+     * @Desc This function populates the "classifiedSixMonthDataVector" variable of the
+     * com.post.parser.model.User class. It gives the total number of posts of
+     * only six months
+     */
+    public List<User> setCategorizedSixMonthDataToUser(List<User> userList) throws ParseException {
+        for (User user : userList) {
+            int[] userMonthVector = user.getClassifiedSixMonthDataVector();
+            for (Posts posts : user.getUserPost()) {
+                String date = posts.getDate();
+                int MonthOfYear = getMonthOfYear(date);
+                if(MonthOfYear <= 5){
+                   userMonthVector[MonthOfYear] = userMonthVector[MonthOfYear] + 1; 
+                } 
+            }
+            user.setClassifiedMonthVector(userMonthVector);
+        }
+        return userList;
+    }
 
     /**
      * @param user
@@ -696,7 +721,7 @@ public class User {
         return dayOfWeek;
     }
 
-    private int getMonthOfYear(String date) throws ParseException {
+    public int getMonthOfYear(String date) throws ParseException {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
         Date dt1 = format1.parse(date);
@@ -749,5 +774,19 @@ public class User {
      */
     public void setPostDate(List<String> postDate) {
         this.postDate = postDate;
+    }
+
+    /**
+     * @return the classifiedSixMonthDataVector
+     */
+    public int[] getClassifiedSixMonthDataVector() {
+        return classifiedSixMonthDataVector;
+    }
+
+    /**
+     * @param classifiedSixMonthDataVector the classifiedSixMonthDataVector to set
+     */
+    public void setClassifiedSixMonthDataVector(int[] classifiedSixMonthDataVector) {
+        this.classifiedSixMonthDataVector = classifiedSixMonthDataVector;
     }
 }
