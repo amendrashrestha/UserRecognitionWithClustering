@@ -51,37 +51,37 @@ public class AnalyzePostTimeWithTimeFeatureVector {
             double timeMatch;
 
             mainUser.setCategorizedTimeToUser(mainUser); //Number of messages in 6 hour interval of a day
-            mainUser.setCategorizedDayToUser(mainUser); //Number of messages in 7 days of week
+            //mainUser.setCategorizedDayToUser(mainUser); //Number of messages in 7 days of week
             mainUser.setCategorizedMonthToUser(mainUser); //Number of messages in 12 months of year
 
             int[] mainUsertimeOfInterval = mainUser.getClassifiedTimeVector();
             int[] mainUsermonthOfYear = mainUser.getClassifiedMonthVector();
-            int[] mainUserdayOfWeek = mainUser.getClassifiedDayVector();
+            //int[] mainUserdayOfWeek = mainUser.getClassifiedDayVector();
 
             otherUsers.setCategorizedTimeToUser(otherUsers); //Number of messages in 6 hour interval of a day
-            otherUsers.setCategorizedDayToUser(otherUsers); //Number of messages in 7 days of week
+            //otherUsers.setCategorizedDayToUser(otherUsers); //Number of messages in 7 days of week
             otherUsers.setCategorizedMonthToUser(otherUsers); //Number of messages in 12 months of year
 
             int[] otherUsertimeOfInterval = otherUsers.getClassifiedTimeVector();
             int[] otherUsermonthOfYear = otherUsers.getClassifiedMonthVector();
-            int[] otherUserdayOfWeek = otherUsers.getClassifiedDayVector();
+            //int[] otherUserdayOfWeek = otherUsers.getClassifiedDayVector();
 
-            int mainUserTotalPost = returnTotalSum(mainUsermonthOfYear);
-            int otherUserTotalPost = returnTotalSum(otherUsermonthOfYear);
+            int mainUserTotalPost = returnTotalSum(mainUsertimeOfInterval);
+            int otherUserTotalPost = returnTotalSum(otherUsertimeOfInterval);
 
             double[] normMainUsertimeOfInterval = returnNormalizedTimeVector(mainUsertimeOfInterval, mainUserTotalPost);
             double[] normMainUsermonthOfYear = returnNormalizedTimeVector(mainUsermonthOfYear, mainUserTotalPost);
-            double[] normMainUserdayOfWeek = returnNormalizedTimeVector(mainUserdayOfWeek, mainUserTotalPost);
+            //double[] normMainUserdayOfWeek = returnNormalizedTimeVector(mainUserdayOfWeek, mainUserTotalPost);
 
             double[] normOtherUsertimeOfInterval = returnNormalizedTimeVector(otherUsertimeOfInterval, otherUserTotalPost);
             double[] normOtherUsermonthOfYear = returnNormalizedTimeVector(otherUsermonthOfYear, otherUserTotalPost);
-             double[] normOtherUserdayOfWeek = returnNormalizedTimeVector(otherUserdayOfWeek, otherUserTotalPost);
+             //double[] normOtherUserdayOfWeek = returnNormalizedTimeVector(otherUserdayOfWeek, otherUserTotalPost);
 
-            double[] mainUsercombined1 = ArrayUtils.addAll(normMainUsertimeOfInterval, normMainUsermonthOfYear);
-              double[] mainUsercombined2 = ArrayUtils.addAll(mainUsercombined1, normMainUserdayOfWeek);
+           // double[] mainUsercombined1 = ArrayUtils.addAll(normMainUsertimeOfInterval, normMainUsermonthOfYear);
+              double[] mainUsercombined2 = ArrayUtils.addAll(normMainUsertimeOfInterval, normMainUsermonthOfYear);
 
-            double[] normUsercombined1 = ArrayUtils.addAll(normOtherUsertimeOfInterval, normOtherUsermonthOfYear);
-             double[] normUsercombined2 = ArrayUtils.addAll(normUsercombined1, normOtherUserdayOfWeek);
+            //double[] normUsercombined1 = ArrayUtils.addAll(normOtherUsertimeOfInterval, normOtherUsermonthOfYear);
+             double[] normUsercombined2 = ArrayUtils.addAll(normOtherUsertimeOfInterval, normOtherUsermonthOfYear);
 //             System.out.println("Second User: " + Arrays.toString(normUsercombined2));
 //             System.out.println("Main User: " + Arrays.toString(mainUsercombined2));
 
@@ -142,12 +142,12 @@ public class AnalyzePostTimeWithTimeFeatureVector {
         double manhattanDistance = 0.0;
         for (int i = 0; i < sequence1.length; i++) {
             double firstElementsequence1 = sequence1[i];
-            System.out.println("First " + firstElementsequence1);
+            //System.out.println("First " + firstElementsequence1);
             double firstElementsequence2 = sequence2[i];
-            System.out.println("Second " + firstElementsequence2);
+            //System.out.println("Second " + firstElementsequence2);
             manhattanDistance = manhattanDistance + Math.abs(firstElementsequence2 - firstElementsequence1);
-            System.out.println("Manha: " + manhattanDistance);
-            System.out.println("---------");
+           // System.out.println("Manha: " + manhattanDistance);
+            //System.out.println("---------");
         }
         return manhattanDistance;
     }

@@ -495,7 +495,7 @@ public class IOReadWrite {
                      allFilesSize.get(j).toString(), IOProperties.USER_FILE_EXTENSION);*/
                     /*User user = ioRW.convertTxtFileToUserObjSixMonthData(IOProperties.INDIVIDUAL_USER_FILE_PATH,
                             directoryList1.toString(), allFilesSize1.toString(), IOProperties.USER_FILE_EXTENSION);*/
-                    if (user.getUserPost().size() >= 1) {
+                    if (user.getUserPost().size() >= 200) {
                         allFiles.add(user);
                     }
                 }
@@ -946,7 +946,8 @@ public class IOReadWrite {
         List<Posts> postListB = new ArrayList<>();
 
         List userPost = user.getUserPost();
-        int userPostSize = user.getUserPost().size();
+//        int userPostSize = user.getUserPost().size();
+        int userPostSize = 444;
 
         for (int i = 0; i < userPostSize; i++) {
             Posts individualPost = (Posts) userPost.get(i);
